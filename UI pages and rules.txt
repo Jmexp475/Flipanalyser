@@ -1,0 +1,94 @@
+
+Page layout and features
+
+Page rules: Each page will have the Banner at the top of the screen, with the game title and the LOGO. This is locked to the top of the screen.
+
+Each page will have the options bar at the bottom, containing buttons to access: Home, Race Picks, Race Results, and a more button(containing extra features and the about information). This is locked to the bottom of the screen.
+
+1. Home Screen: 
+
+The home screen will have a section showing the next race with the full name, Horse picked (Its silks and name) and finally the time before the race beigns. Once the race has began it will show 'Race Off'.
+Until the results have been entered at which point it will then switch to the next race.
+
+There will be a section for Go to race this will take you directly to the racecard of that race 
+
+Then there will be a section which shows the upcoming races- the time they are off and what picks you have selected. 
+If no selections have been made  there will be a buttom to "Pick" which will take you directly to the Racecard to selct your horse
+
+There will be a section at the base for the leaderboard- this will be a live updating section showing the results for that day with a button to go to the leaderboard section 
+
+Last section will be the overall Score section which shows the total score of the top 3 players for the whole Festival, below this will be a section showing the account currently playing and their score and position in the standings. 
+
+API to Populate: next race information; race name,Race time(with hours and minutes 
+countdown),the length of the race. horse picked with its silks(marked e.g "silk_url": "https://www.rp-assets.com/svg/9/6/0/168069.svg"). In  the race picks section it will display the next three races, its start time and the horse name that is picked(or a pick now button, if no horse picked, this will take you to the race view for the race in question). The app will populate the home screen standings section from the standings page.
+
+2. The Race pick section-  This page will automatically open up to the day that we are currently on.
+
+There will be the option to press on each day this will allow you to then see the race picks for the respective days.
+
+All of the races for the day will be displayed on this page. when pressing on a specific race the player will then be taken to that day to select/change their picks.
+
+When a race is completed pressing on the race will take you to the race Results page.
+
+The page will also show on the left, the current pick for the player. or if no pick has been made a green pick now  button which will take you to the race view.
+
+API to populate: Race time, race name, race length (in Miles and furlongs e.g 3m 2f) number of runners in the race.
+
+3.  The Racecard section-  This page will automatically open up to the Next/current race in time.
+
+The section at the top with race times will allow the player to switch between each race by pressing the time of the race.
+
+Each horse will have a section. THe short form of the section will display: Silks, Name of Horse, Trainer, Jockey, points for a win, points for a place.
+
+When the Horse is selected page 3.5(Horse View will show under that Horse This will have further details on the Horse- Silks(large and in the top centre of the page) Form, Details (Eg 9yo BG), Owner, Weight, OR (Offifical Rating), Breeding (Sire- Dam). Finally Finished With Quotes)
+This page will not be a full change pop a pop down peice of information under that horse and cna be done on each horse.
+
+On the far right of the screen will be a section that states "Pick". THis will be displayed by every horse until pressed for one. At which point It will changed to "Picked" and the box Will fill in Green. 
+Thus telling the player and the game that this horse has been picked for that race by that player 
+
+API to populate: race times, Trainer name. In page 3.5(horse view) API will populate: Form(e.g 11U0-FP3), Details: (e.g age 9yo BG), Trainer name, Jockey name, owner name, Weight(e.g 11st 10lb), OR( e.g 170, breeding( e.g blue bresil-queeny stage) and at the bottom quotes about the horse.
+
+4. The Race Results Sectiom-  This page will automatically open up to the Latest race Result.
+
+The section at the top will have the Race days to allow the user to see previous days results, using the same mechanism as the race pick section
+
+The section just below with race times will allow the player to switch between each race by pressing the time of the race.
+If a Race hasnt begane it will just display a Message saying "Race not completed/Results Not offical".
+
+The right section will display the order of which the horses finished in and the Lengths by which each horse lost ot the one in front of it. 
+If a Horse is DNF it will display that instead of a place and length. If Furthe information is available such as "pulled Up or Unsteated" THis will be displayed.
+
+The Second section from the right will display the Horses Name 
+
+THe Third Section from the right will display the points that that horse has aquired from the race. For DNFs it will also show the -points.
+
+The final section will display who selected each horse.
+
+API to populate: after converting the results to points using the racecard odds and the results card for the winners and placement of the horses.
+
+5.The Standings-  This page will automatically open up to the Day of the race that are currenrly happening.
+
+The section at the top with race times  will allow the player to switch between Day by pressing the days at the top . With a Section at the right "Overall" Which will hold the results for all of the days totaled together.
+
+Each section displayed will be live and updating when results flow through.
+
+THe only section the interact with here will be the players Name. When pressed it will take you to that players opponents view Section.
+
+
+6. The opponents view section- This page will automatically open up to the Day of the race that are currently happening.
+
+When pressing on the players name there will be a drop down selction bar of each player so you can switch between the oppents you are viewing
+
+The section at the top with race tiems will allow the player to switch between Day by pressing the days at the top. It will also have an overall section which will show the players results per day, in the same format as the days races.
+
+This will display all of the Picks that an opponetns made- However only after race results have be displayed will other playes be able to see their selections.
+
+ If the race has not started it will just Display "Hidden." OTHER USERS CANNOT SEE OTHERS PICKS BEFORE THE RACE STARTS. this is designed to stop copycats.
+
+There is a button at the top which states "back to the Standings". This will take you back to that days standings. 
+
+
+
+
+
+

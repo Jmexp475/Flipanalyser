@@ -1,0 +1,1794 @@
+Please ignore the mock-data included replace with API, please add an error notice to show where API is not collecting information. Now I have everything. Here is the complete exportable codebase, file by file, ready to paste into Codex:
+
+Fantasy Furlong — Complete UI Codebase Export
+Copy each block below into its corresponding file path.
+
+src/app/App.tsx
+import { RouterProvider } from "react-router";
+import { router } from "./routes";
+
+export default function App() {
+  return <RouterProvider router={router} />;
+}
+src/app/routes.ts
+import { createBrowserRouter } from "react-router";
+import { Layout } from "./components/Layout";
+import Home from "./pages/Home";
+import RacePicks from "./pages/RacePicks";
+import Racecard from "./pages/Racecard";
+import Results from "./pages/Results";
+import Standings from "./pages/Standings";
+import OpponentView from "./pages/OpponentView";
+import More from "./pages/More";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    Component: Layout,
+    children: [
+      { index: true, Component: Home },
+      { path: "picks", Component: RacePicks },
+      { path: "racecard", Component: Racecard },
+      { path: "results", Component: Results },
+      { path: "standings", Component: Standings },
+      { path: "opponent", Component: OpponentView },
+      { path: "more", Component: More },
+    ],
+  },
+]);
+src/app/components/Layout.tsx
+import { Outlet, useNavigate, useLocation } from "react-router";
+import { Home, Binoculars, ListOrdered, Trophy, MoreHorizontal, ClipboardList } from "lucide-react";
+
+const NAV_ITEMS = [
+  { path: "/", label: "Home", Icon: Home },
+  { path: "/picks", label: "Race Picks", Icon: Binoculars },
+  { path: "/racecard", label: "Racecard", Icon: ClipboardList },
+  { path: "/results", label: "Results", Icon: ListOrdered },
+  { path: "/standings", label: "Standings", Icon: Trophy },
+  { path: "/more", label: "More", Icon: MoreHorizontal },
+];
+
+export function Layout() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  return (
+    <div className="flex flex-col min-h-screen max-w-md mx-auto relative bg-gray-50">
+      {/* ─── Banner ─── */}
+      <header className="sticky top-0 z-50 bg-green-900 shadow-lg">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center flex-shrink-0 shadow-md">
+            <span className="text-green-900 text-lg">🏇</span>
+          </div>
+          <div>
+            <h1 className="text-yellow-400 tracking-wide uppercase" style={{ fontSize: "15px", fontWeight: 700, letterSpacing: "0.08em", lineHeight: 1.1 }}>
+              Fantasy Furlong
+            </h1>
+            <p className="text-green-300" style={{ fontSize: "11px", letterSpacing: "0.04em" }}>
+              Cheltenham Festival 2026
+            </p>
+          </div>
+          <div className="ml-auto">
+            <div className="w-8 h-8 rounded-full bg-yellow-400 flex items-center justify-center text-green-900 text-sm font-bold">
+              Y
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* ─── Content ─── */}
+      <main className="flex-1 overflow-y-auto pb-20">
+        <Outlet />
+      </main>
+
+      {/* ─── Bottom Nav ─── */}
+      <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md bg-green-900 border-t border-green-700 z-50 shadow-[0_-2px_12px_rgba(0,0,0,0.3)]">
+        <div className="flex items-center justify-around py-1">
+          {NAV_ITEMS.map(({ path, label, Icon }) => {
+            const active = location.pathname === path || (path !== "/" && location.pathname.startsWith(path));
+            return (
+              <button
+                key={path}
+                onClick={() => navigate(path)}
+                className="flex flex-col items-center gap-0.5 px-2 py-2 min-w-0 flex-1"
+              >
+                <Icon size={20} className={active ? "text-yellow-400" : "text-green-400"} />
+                <span
+                  style={{ fontSize: "9px", fontWeight: active ? 700 : 400, lineHeight: 1.2 }}
+                  className={active ? "text-yellow-400" : "text-green-400"}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </nav>
+    </div>
+  );
+}
+src/app/components/SilkIcon.tsx
+interface SilkIconProps {
+  colors: string[];
+  size?: number;
+  className?: string;
+}
+
+export function SilkIcon({ colors, size = 32, className = "" }: SilkIconProps) {
+  const [body, sleeve] = colors;
+  return (
+    <svg
+      width={size}
+      height={size * 1.1}
+      viewBox="0 0 32 36"
+      className={className}
+      style={{ display: "inline-block", flexShrink: 0 }}
+    >
+      {/* Body */}
+      <path d="M8 8 L4 14 L8 16 L8 34 L24 34 L24 16 L28 14 L24 8 L20 6 L16 8 L12 6 Z" fill={body} stroke="#fff" strokeWidth="0.8" />
+      {/* Sleeves */}
+      <path d="M4 14 L1 20 L6 22 L8 16 Z" fill={sleeve} stroke="#fff" strokeWidth="0.8" />
+      <path d="M28 14 L31 20 L26 22 L24 16 Z" fill={sleeve} stroke="#fff" strokeWidth="0.8" />
+      {/* Cap */}
+      <ellipse cx="16" cy="7" rx="6" ry="4" fill={sleeve} stroke="#fff" strokeWidth="0.8" />
+      <ellipse cx="16" cy="6" rx="4" ry="2.5" fill={body} />
+    </svg>
+  );
+}
+src/app/data/mockData.ts
+⚠️ This is the complete mock data file. In production, replace all const exports with API calls matching the locked /api/races, /api/picks, /api/leaderboard etc. endpoints. The types/interfaces at the top should be kept and reused.
+
+// Fantasy Furlong — Mock Data (Cheltenham Festival 2026)
+// ─────────────────────────────────────────────────────
+// CODEX NOTE: Replace MEETING, ALL_RACES, PICKS, LEADERBOARD, USERS
+// with live API responses from /api/meeting, /api/races, /api/picks,
+// /api/leaderboard. All types below mirror the locked DB schema exactly.
+
+export type RaceStatus = "declared" | "off" | "result" | "abandoned";
+export type FinishStatus = "finished" | "pulled_up" | "unseated" | "fell" | "refused" | "dnf";
+
+export interface Runner {
+  id: string;
+  raceId: string;
+  horseName: string;
+  draw: number;
+  jockey: string;
+  trainer: string;
+  owner: string;
+  weight: string;
+  officialRating: number;
+  form: string;
+  details: string;
+  breeding: string;
+  rawOdds: number;
+  fairOdds: number;
+  isNR: boolean;
+  finishPosition?: number;
+  finishStatus?: FinishStatus;
+  lengths?: number;
+  pointsWin: number;
+  pointsPlace: number;
+  pointsAwarded?: number;
+  silkColors: string[]; // [primary, secondary]
+  quote?: string;
+}
+
+export interface Race {
+  id: string;
+  meetingId: string;
+  dayIndex: number;
+  raceName: string;
+  offTime: string; // HH:MM
+  distanceMiles: string;
+  fieldSize: number;
+  status: RaceStatus;
+  settled: boolean;
+  raceNumber: number;
+  runners: Runner[];
+}
+
+export interface Meeting {
+  id: string;
+  course: string;
+  festival: string;
+  days: string[];
+  snapshotLocked: boolean;
+}
+
+export interface User {
+  id: string;
+  displayName: string;
+  isAdmin: boolean;
+  avatar: string;
+}
+
+export interface Pick {
+  userId: string;
+  raceId: string;
+  runnerId: string;
+}
+
+export interface LeaderboardEntry {
+  userId: string;
+  displayName: string;
+  totalPoints: number;
+  dayPoints: number[];
+  wins: number;
+  places: number;
+  dnfCount: number;
+  position: number;
+}
+
+// ─── Meeting ─────────────────────────────────────────────────────────────────
+export const MEETING: Meeting = {
+  id: "m1",
+  course: "Cheltenham",
+  festival: "Cheltenham Festival",
+  days: ["Tue 10 Mar", "Wed 11 Mar", "Thu 12 Mar", "Fri 13 Mar"],
+  snapshotLocked: true,
+};
+
+// ─── App State ───────────────────────────────────────────────────────────────
+// CODEX: CURRENT_DAY_INDEX comes from comparing today's date to meeting.days
+// CODEX: CURRENT_USER_ID comes from auth session
+// CODEX: SIMULATED_NOW_MINUTES is replaced by real UTC clock
+export const CURRENT_DAY_INDEX = 1;
+export const CURRENT_USER_ID = "u_you";
+export const SIMULATED_NOW_MINUTES = 14 * 60 + 45; // 14:45
+
+// ─── Users ───────────────────────────────────────────────────────────────────
+export const USERS: User[] = [
+  { id: "u_will",   displayName: "Will",   isAdmin: false, avatar: "W" },
+  { id: "u_alex",   displayName: "Alex",   isAdmin: false, avatar: "A" },
+  { id: "u_ciaran", displayName: "Ciaran", isAdmin: false, avatar: "C" },
+  { id: "u_sarah",  displayName: "Sarah",  isAdmin: false, avatar: "S" },
+  { id: "u_you",    displayName: "You",    isAdmin: false, avatar: "Y" },
+  { id: "u_james",  displayName: "James",  isAdmin: false, avatar: "J" },
+];
+
+// ─── Races ───────────────────────────────────────────────────────────────────
+export const ALL_RACES: Race[] = [
+  // ═══ DAY 1 — Champion Day ═══
+  {
+    id: "r1_1", meetingId: "m1", dayIndex: 0, raceNumber: 1,
+    raceName: "Supreme Novices' Hurdle", offTime: "13:30", distanceMiles: "2m 87y",
+    fieldSize: 12, status: "result", settled: true,
+    runners: [
+      { id: "run_1_1", raceId: "r1_1", horseName: "Mystical Power", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Highfield Farm", weight: "11st 10lb", officialRating: 152, form: "1-1111", details: "5yo Bay Gelding", breeding: "Zoffany - Mystic Sea", rawOdds: 2.5, fairOdds: 2.8, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 32, pointsPlace: 10, pointsAwarded: 32, silkColors: ["#1a6b3c", "#f5c518"], quote: "Exciting prospect, could be special." },
+      { id: "run_1_2", raceId: "r1_1", horseName: "Slade Steel", draw: 2, jockey: "R. Blackmore", trainer: "G. Elliott", owner: "Cheveley Park Stud", weight: "11st 10lb", officialRating: 148, form: "21-112", details: "5yo Bay Gelding", breeding: "Galileo - Steel City", rawOdds: 4.0, fairOdds: 4.5, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 1.5, pointsWin: 20, pointsPlace: 7, pointsAwarded: 7, silkColors: ["#c0392b", "#ffffff"], quote: "Consistent performer, should run well." },
+      { id: "run_1_3", raceId: "r1_1", horseName: "The Yellow Clay", draw: 3, jockey: "M. Walsh", trainer: "M.F. Morris", owner: "Supreme Racing", weight: "11st 10lb", officialRating: 145, form: "1-1121", details: "5yo Chestnut Gelding", breeding: "Beat Hollow - Yellow Brick", rawOdds: 6.0, fairOdds: 6.5, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 3, pointsWin: 15, pointsPlace: 5, pointsAwarded: 5, silkColors: ["#f39c12", "#2c3e50"], quote: "Dark horse, could outrun his price." },
+      { id: "run_1_4", raceId: "r1_1", horseName: "Kopek Des Bordes", draw: 4, jockey: "J. Kennedy", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "11st 10lb", officialRating: 142, form: "2-213", details: "5yo Bay Gelding", breeding: "Kapgarde - Kopeka", rawOdds: 8.0, fairOdds: 9.0, isNR: false, finishPosition: 4, finishStatus: "finished", lengths: 5, pointsWin: 10, pointsPlace: 3, pointsAwarded: 0, silkColors: ["#2980b9", "#ecf0f1"], quote: "Consistent but up against it today." },
+    ],
+  },
+  {
+    id: "r1_2", meetingId: "m1", dayIndex: 0, raceNumber: 2,
+    raceName: "Arkle Challenge Trophy", offTime: "14:10", distanceMiles: "1m 7f 199y",
+    fieldSize: 10, status: "result", settled: true,
+    runners: [
+      { id: "run_2_1", raceId: "r1_2", horseName: "Il Est Francais", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Supreme Partners", weight: "11st 10lb", officialRating: 158, form: "1-1211", details: "6yo Bay Gelding", breeding: "No Risk At All - Belle Francaise", rawOdds: 3.0, fairOdds: 3.2, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 28, pointsPlace: 9, pointsAwarded: 28, silkColors: ["#1a6b3c", "#ffffff"], quote: "Champion in the making." },
+      { id: "run_2_2", raceId: "r1_2", horseName: "Authorised Speed", draw: 2, jockey: "R. Blackmore", trainer: "N. Henderson", owner: "JP McManus", weight: "11st 10lb", officialRating: 154, form: "1-1132", details: "6yo Brown Gelding", breeding: "Authorized - Speed Thrills", rawOdds: 4.5, fairOdds: 5.0, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 2, pointsWin: 18, pointsPlace: 6, pointsAwarded: 6, silkColors: ["#27ae60", "#f5c518"], quote: "Won nicely last time." },
+      { id: "run_2_3", raceId: "r1_2", horseName: "Gaelic Warrior", draw: 3, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "11st 10lb", officialRating: 160, form: "1-1U21", details: "7yo Grey Gelding", breeding: "Walk In The Park - Gaelic Princess", rawOdds: 2.5, fairOdds: 2.8, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 4, pointsWin: 32, pointsPlace: 10, pointsAwarded: 0, silkColors: ["#8e44ad", "#f5c518"], quote: "Classy chaser, just needed the run." },
+    ],
+  },
+  {
+    id: "r1_3", meetingId: "m1", dayIndex: 0, raceNumber: 3,
+    raceName: "Ultima Handicap Chase", offTime: "14:50", distanceMiles: "3m 1f",
+    fieldSize: 24, status: "result", settled: true,
+    runners: [
+      { id: "run_3_1", raceId: "r1_3", horseName: "Corach Rambler", draw: 1, jockey: "D. Mullins", trainer: "L. Russell", owner: "The Legbiter Partnership", weight: "11st 4lb", officialRating: 165, form: "P111-21", details: "9yo Bay Gelding", breeding: "Flemensfirth - Maid Of The Mist", rawOdds: 7.0, fairOdds: 7.5, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 12, pointsPlace: 4, pointsAwarded: 12, silkColors: ["#e74c3c", "#f5c518"], quote: "Loves this track and trip." },
+      { id: "run_3_2", raceId: "r1_3", horseName: "Gentleman De Mee", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Donnchada Doyle", weight: "11st 0lb", officialRating: 158, form: "2-1212", details: "8yo Bay Gelding", breeding: "Walk In The Park - La Peintre", rawOdds: 9.0, fairOdds: 10.0, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 1, pointsWin: 10, pointsPlace: 3, pointsAwarded: 3, silkColors: ["#2980b9", "#ecf0f1"], quote: "Versatile performer." },
+      { id: "run_3_3", raceId: "r1_3", horseName: "Fugitif", draw: 3, jockey: "J. Burke", trainer: "D. Skelton", owner: "The Odds & Ends Partnership", weight: "10st 12lb", officialRating: 152, form: "3-3221", details: "7yo Bay Gelding", breeding: "Califet - Fugue", rawOdds: 12.0, fairOdds: 13.0, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 2, pointsWin: 8, pointsPlace: 3, pointsAwarded: 0, silkColors: ["#16a085", "#ffffff"], quote: "Consistent over fences." },
+    ],
+  },
+  {
+    id: "r1_4", meetingId: "m1", dayIndex: 0, raceNumber: 4,
+    raceName: "Champion Hurdle", offTime: "15:30", distanceMiles: "2m 87y",
+    fieldSize: 12, status: "result", settled: true,
+    runners: [
+      { id: "run_4_1", raceId: "r1_4", horseName: "Constitution Hill", draw: 1, jockey: "N. Fehily", trainer: "N. Henderson", owner: "Michael Buckley", weight: "11st 10lb", officialRating: 173, form: "1-1111", details: "7yo Bay Gelding", breeding: "Blue Bresil - Hillside Track", rawOdds: 1.4, fairOdds: 1.5, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 58, pointsPlace: 15, pointsAwarded: 58, silkColors: ["#c0392b", "#2c3e50"], quote: "Simply brilliant. Best hurdler in training." },
+      { id: "run_4_2", raceId: "r1_4", horseName: "State Man", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park Stud", weight: "11st 10lb", officialRating: 170, form: "1-1121", details: "7yo Bay Gelding", breeding: "Doctor Dino - Stateside", rawOdds: 4.0, fairOdds: 4.5, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 3, pointsWin: 20, pointsPlace: 7, pointsAwarded: 7, silkColors: ["#1a6b3c", "#f5c518"], quote: "Another classy performance." },
+      { id: "run_4_3", raceId: "r1_4", horseName: "Lossiemouth", draw: 3, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Sullivan Bloodstock", weight: "11st 4lb", officialRating: 163, form: "1-1112", details: "6yo Bay Mare", breeding: "Authorized - Lucky Lossie", rawOdds: 6.0, fairOdds: 6.5, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 5, pointsWin: 15, pointsPlace: 5, pointsAwarded: 0, silkColors: ["#f39c12", "#1a6b3c"], quote: "Ran a cracker, big future." },
+    ],
+  },
+  {
+    id: "r1_5", meetingId: "m1", dayIndex: 0, raceNumber: 5,
+    raceName: "Mares' Hurdle", offTime: "16:10", distanceMiles: "2m 179y",
+    fieldSize: 14, status: "result", settled: true,
+    runners: [
+      { id: "run_5_1", raceId: "r1_5", horseName: "Honeysuckle", draw: 1, jockey: "R. Blackmore", trainer: "H. de Bromhead", owner: "Kenny Alexander", weight: "11st 4lb", officialRating: 172, form: "1-1111", details: "9yo Bay Mare", breeding: "Quadruple - Honey Emma", rawOdds: 1.5, fairOdds: 1.6, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 55, pointsPlace: 14, pointsAwarded: 55, silkColors: ["#f5c518", "#c0392b"], quote: "Unbeaten legend of the track." },
+      { id: "run_5_2", raceId: "r1_5", horseName: "Impervious", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Highfield Farm", weight: "11st 4lb", officialRating: 155, form: "2-1121", details: "7yo Bay Mare", breeding: "Presenting - Above The Clouds", rawOdds: 5.0, fairOdds: 5.5, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 4, pointsWin: 16, pointsPlace: 5, pointsAwarded: 5, silkColors: ["#9b59b6", "#ffffff"], quote: "Good mare, just met a superstar." },
+    ],
+  },
+  {
+    id: "r1_6", meetingId: "m1", dayIndex: 0, raceNumber: 6,
+    raceName: "National Hunt Chase", offTime: "17:00", distanceMiles: "3m 5f 34y",
+    fieldSize: 20, status: "result", settled: true,
+    runners: [
+      { id: "run_6_1", raceId: "r1_6", horseName: "The Hollow Ginge", draw: 1, jockey: "J. Bowen", trainer: "P. Bowen", owner: "Bowen Family", weight: "11st 0lb", officialRating: 145, form: "1-2111", details: "7yo Chestnut Gelding", breeding: "Presenting - Tinderella", rawOdds: 5.0, fairOdds: 5.5, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 16, pointsPlace: 5, pointsAwarded: 16, silkColors: ["#e67e22", "#2c3e50"], quote: "Tough as teak." },
+      { id: "run_6_2", raceId: "r1_6", horseName: "Galia Des Liteaux", draw: 2, jockey: "C. Deutsch", trainer: "V. Williams", owner: "John Romans", weight: "10st 12lb", officialRating: 138, form: "3-1122", details: "7yo Bay Mare", breeding: "Coastal Path - Galine", rawOdds: 7.0, fairOdds: 7.5, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 2, pointsWin: 12, pointsPlace: 4, pointsAwarded: 4, silkColors: ["#2980b9", "#f5c518"], quote: "Stays all day." },
+    ],
+  },
+
+  // ═══ DAY 2 — Ladies Day (Current Day) ═══
+  {
+    id: "r2_1", meetingId: "m1", dayIndex: 1, raceNumber: 1,
+    raceName: "Ballymore Novices' Hurdle", offTime: "13:30", distanceMiles: "2m 5f",
+    fieldSize: 14, status: "result", settled: true,
+    runners: [
+      { id: "run_7_1", raceId: "r2_1", horseName: "Skyace", draw: 1, jockey: "R. Blackmore", trainer: "H. de Bromhead", owner: "Barry Maloney", weight: "11st 4lb", officialRating: 148, form: "1-1121", details: "5yo Bay Mare", breeding: "Sans Frontieres - Skyblaze", rawOdds: 3.5, fairOdds: 3.8, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 24, pointsPlace: 8, pointsAwarded: 24, silkColors: ["#3498db", "#ecf0f1"], quote: "Exciting young mare." },
+      { id: "run_7_2", raceId: "r2_1", horseName: "Three Card Brag", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "11st 10lb", officialRating: 150, form: "1-1211", details: "5yo Bay Gelding", breeding: "Stowaway - Card Sharp", rawOdds: 3.0, fairOdds: 3.2, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 1.5, pointsWin: 28, pointsPlace: 9, pointsAwarded: 9, silkColors: ["#1a6b3c", "#f5c518"], quote: "Hard to keep out of frame." },
+      { id: "run_7_3", raceId: "r2_1", horseName: "Gala Marceau", draw: 3, jockey: "J. Kennedy", trainer: "W.P. Mullins", owner: "Rich Ricci", weight: "11st 10lb", officialRating: 145, form: "2-1112", details: "5yo Chestnut Mare", breeding: "Shalanaya - Gala Night", rawOdds: 5.0, fairOdds: 5.5, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 3, pointsWin: 16, pointsPlace: 5, pointsAwarded: 0, silkColors: ["#e74c3c", "#ffffff"], quote: "Progressive mare." },
+      { id: "run_7_4", raceId: "r2_1", horseName: "Silver Birch Boy", draw: 4, jockey: "M. Walsh", trainer: "M. Brassil", owner: "Go Racing Syndicate", weight: "11st 10lb", officialRating: 135, form: "F-2213", details: "6yo Grey Gelding", breeding: "Silver Patriarch - Birch Tree", rawOdds: 12.0, fairOdds: 13.0, isNR: false, finishPosition: 4, finishStatus: "finished", lengths: 7, pointsWin: 8, pointsPlace: 3, pointsAwarded: 0, silkColors: ["#95a5a6", "#2c3e50"], quote: "Consistent but outclassed." },
+    ],
+  },
+  {
+    id: "r2_2", meetingId: "m1", dayIndex: 1, raceNumber: 2,
+    raceName: "RSA Novices' Chase", offTime: "14:10", distanceMiles: "2m 7f 213y",
+    fieldSize: 10, status: "result", settled: true,
+    runners: [
+      { id: "run_8_1", raceId: "r2_2", horseName: "Conflated", draw: 1, jockey: "J.W. Kennedy", trainer: "G. Elliott", owner: "Bective Stud", weight: "11st 10lb", officialRating: 162, form: "1-1131", details: "7yo Brown Gelding", breeding: "Beneficial - Pearl Creek", rawOdds: 4.0, fairOdds: 4.5, isNR: false, finishPosition: 1, finishStatus: "finished", lengths: 0, pointsWin: 20, pointsPlace: 7, pointsAwarded: 20, silkColors: ["#1abc9c", "#2c3e50"], quote: "Electric over fences." },
+      { id: "run_8_2", raceId: "r2_2", horseName: "Bravemansgame", draw: 2, jockey: "H. Cobden", trainer: "P. Nicholls", owner: "Mrs Johnny De La Hey", weight: "11st 10lb", officialRating: 165, form: "1-1121", details: "7yo Bay Gelding", breeding: "Brave Mansonnien - Princess Tara", rawOdds: 3.0, fairOdds: 3.2, isNR: false, finishPosition: 2, finishStatus: "finished", lengths: 2, pointsWin: 28, pointsPlace: 9, pointsAwarded: 9, silkColors: ["#e74c3c", "#f5c518"], quote: "Big staying chaser in the making." },
+      { id: "run_8_3", raceId: "r2_2", horseName: "Ahoy Senor", draw: 3, jockey: "D. Mullins", trainer: "L. Russell", owner: "Straight Gin Partnership", weight: "11st 10lb", officialRating: 158, form: "3-1113", details: "7yo Bay Gelding", breeding: "Flemensfirth - Lady Senor", rawOdds: 6.0, fairOdds: 6.5, isNR: false, finishPosition: 3, finishStatus: "finished", lengths: 4, pointsWin: 15, pointsPlace: 5, pointsAwarded: 0, silkColors: ["#3498db", "#ffffff"], quote: "Brave jumper." },
+    ],
+  },
+  {
+    id: "r2_3", meetingId: "m1", dayIndex: 1, raceNumber: 3,
+    raceName: "Coral Cup Handicap Hurdle", offTime: "14:50", distanceMiles: "2m 5f",
+    fieldSize: 26, status: "off", settled: false,
+    runners: [
+      { id: "run_9_1", raceId: "r2_3", horseName: "Emerald Constellation", draw: 1, jockey: "R. Blackmore", trainer: "H. de Bromhead", owner: "Highfield Farm", weight: "11st 2lb", officialRating: 148, form: "1-2113", details: "6yo Bay Mare", breeding: "Yeats - Emerald Isle", rawOdds: 8.0, fairOdds: 8.5, isNR: false, pointsWin: 10, pointsPlace: 3, silkColors: ["#27ae60", "#f5c518"], quote: "Loves soft ground, hit and miss on good." },
+      { id: "run_9_2", raceId: "r2_3", horseName: "Benpardrig", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "10st 10lb", officialRating: 140, form: "2-1221", details: "6yo Chestnut Gelding", breeding: "Ben Alinatmane - Pardrig", rawOdds: 10.0, fairOdds: 11.0, isNR: false, pointsWin: 8, pointsPlace: 3, silkColors: ["#1a6b3c", "#ecf0f1"], quote: "Consistent performer." },
+      { id: "run_9_3", raceId: "r2_3", horseName: "Paddy's Answer", draw: 3, jockey: "M. Walsh", trainer: "J. Harrington", owner: "JP McManus", weight: "11st 0lb", officialRating: 145, form: "1-1312", details: "7yo Bay Gelding", breeding: "Stowaway - Answer Me This", rawOdds: 6.0, fairOdds: 6.5, isNR: false, pointsWin: 15, pointsPlace: 5, silkColors: ["#27ae60", "#f5c518"], quote: "McManus horses always show up here." },
+      { id: "run_9_4", raceId: "r2_3", horseName: "Two For Gold", draw: 4, jockey: "T. Cannon", trainer: "K. Bailey", owner: "The Fans Partnership", weight: "10st 8lb", officialRating: 138, form: "2-2122", details: "8yo Brown Gelding", breeding: "Gold Well - Double Gamble", rawOdds: 14.0, fairOdds: 15.0, isNR: false, pointsWin: 6, pointsPlace: 2, silkColors: ["#f39c12", "#1a6b3c"], quote: "Veteran campaigner." },
+    ],
+  },
+  {
+    id: "r2_4", meetingId: "m1", dayIndex: 1, raceNumber: 4,
+    raceName: "Queen Mother Champion Chase", offTime: "15:30", distanceMiles: "1m 7f 199y",
+    fieldSize: 9, status: "declared", settled: false,
+    runners: [
+      { id: "run_10_1", raceId: "r2_4", horseName: "Constitution Hill", draw: 1, jockey: "N. Fehily", trainer: "N. Henderson", owner: "Michael Buckley", weight: "11st 10lb", officialRating: 173, form: "1-1111", details: "7yo Bay Gelding", breeding: "Blue Bresil - Hillside Track", rawOdds: 1.4, fairOdds: 1.5, isNR: false, pointsWin: 58, pointsPlace: 15, silkColors: ["#c0392b", "#2c3e50"], quote: "Simply the best two-mile chaser in training." },
+      { id: "run_10_2", raceId: "r2_4", horseName: "Chacun Pour Soi", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Rich Ricci", weight: "11st 10lb", officialRating: 170, form: "1-1211", details: "10yo Bay Gelding", breeding: "Policy Maker - Risara", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#1a6b3c", "#f5c518"], quote: "Former champion, still very dangerous." },
+      { id: "run_10_3", raceId: "r2_4", horseName: "Energumene", draw: 3, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Tony Bloom", weight: "11st 10lb", officialRating: 168, form: "1-1121", details: "8yo Bay Gelding", breeding: "Denham Red - Elegante", rawOdds: 4.0, fairOdds: 4.5, isNR: false, pointsWin: 20, pointsPlace: 7, silkColors: ["#8e44ad", "#ffffff"], quote: "Brilliant front-runner." },
+      { id: "run_10_4", raceId: "r2_4", horseName: "Shishkin", draw: 4, jockey: "N. Henderson", trainer: "N. Henderson", owner: "Mrs C Hitchins", weight: "11st 10lb", officialRating: 164, form: "1-3121", details: "8yo Bay Gelding", breeding: "Malinas - Nuit Polaire", rawOdds: 8.0, fairOdds: 9.0, isNR: false, pointsWin: 10, pointsPlace: 3, silkColors: ["#2980b9", "#ecf0f1"], quote: "Top chaser having a great season." },
+      { id: "run_10_5", raceId: "r2_4", horseName: "Edwardstone", draw: 5, jockey: "T. Scudamore", trainer: "A. King", owner: "Mrs E Roberts", weight: "11st 10lb", officialRating: 160, form: "2-1212", details: "8yo Brown Gelding", breeding: "Kayf Tara - Salmwood Rose", rawOdds: 12.0, fairOdds: 13.0, isNR: false, pointsWin: 8, pointsPlace: 3, silkColors: ["#e67e22", "#2c3e50"], quote: "Never stopped progressing." },
+    ],
+  },
+  {
+    id: "r2_5", meetingId: "m1", dayIndex: 1, raceNumber: 5,
+    raceName: "Turners Novices' Chase", offTime: "16:10", distanceMiles: "2m 4f",
+    fieldSize: 8, status: "declared", settled: false,
+    runners: [
+      { id: "run_11_1", raceId: "r2_5", horseName: "Galopin Des Champs", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park Stud", weight: "11st 10lb", officialRating: 168, form: "1-1111", details: "6yo Chestnut Gelding", breeding: "Timos - Coco Des Champs", rawOdds: 1.7, fairOdds: 1.9, isNR: false, pointsWin: 48, pointsPlace: 13, silkColors: ["#1a6b3c", "#f5c518"], quote: "The next Arkle?" },
+      { id: "run_11_2", raceId: "r2_5", horseName: "L'Homme Presse", draw: 2, jockey: "A. Coleman", trainer: "V. Williams", owner: "Mr D Maxwell", weight: "11st 10lb", officialRating: 160, form: "1-1211", details: "7yo Bay Gelding", breeding: "Authorized - Femme Presse", rawOdds: 4.5, fairOdds: 5.0, isNR: false, pointsWin: 18, pointsPlace: 6, silkColors: ["#2980b9", "#ffffff"], quote: "Brilliant staying chaser." },
+      { id: "run_11_3", raceId: "r2_5", horseName: "Bob Olinger", draw: 3, jockey: "R. Blackmore", trainer: "H. de Bromhead", owner: "Robcour", weight: "11st 10lb", officialRating: 163, form: "1-1131", details: "7yo Bay Gelding", breeding: "Sholokhov - Whiteabbey", rawOdds: 3.5, fairOdds: 4.0, isNR: false, pointsWin: 22, pointsPlace: 7, silkColors: ["#e74c3c", "#f5c518"], quote: "Talented but needs things to go right." },
+    ],
+  },
+  {
+    id: "r2_6", meetingId: "m1", dayIndex: 1, raceNumber: 6,
+    raceName: "Pertemps Final Handicap Hurdle", offTime: "16:50", distanceMiles: "3m 2f",
+    fieldSize: 24, status: "declared", settled: false,
+    runners: [
+      { id: "run_12_1", raceId: "r2_6", horseName: "Gowel Road", draw: 1, jockey: "D. Mullins", trainer: "G. Elliott", owner: "John Gunning", weight: "11st 2lb", officialRating: 145, form: "2-1212", details: "7yo Bay Gelding", breeding: "Beneficial - Road Works", rawOdds: 9.0, fairOdds: 10.0, isNR: false, pointsWin: 10, pointsPlace: 3, silkColors: ["#27ae60", "#2c3e50"], quote: "Made for this race." },
+      { id: "run_12_2", raceId: "r2_6", horseName: "Crambo", draw: 2, jockey: "T. Bellamy", trainer: "P. Hobbs", owner: "Mrs Diana Whateley", weight: "10st 12lb", officialRating: 140, form: "1-1122", details: "8yo Bay Gelding", breeding: "Gold Well - Cramboleena", rawOdds: 7.0, fairOdds: 7.5, isNR: false, pointsWin: 12, pointsPlace: 4, silkColors: ["#f39c12", "#ecf0f1"], quote: "Loves the big occasion." },
+      { id: "run_12_3", raceId: "r2_6", horseName: "Billaway", draw: 3, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Mr P Doyle", weight: "11st 4lb", officialRating: 150, form: "1-1131", details: "9yo Bay Gelding", breeding: "Presenting - Miss Hilda", rawOdds: 6.0, fairOdds: 6.5, isNR: false, pointsWin: 15, pointsPlace: 5, silkColors: ["#1a6b3c", "#f5c518"], quote: "Mullins always targets this." },
+    ],
+  },
+  {
+    id: "r2_7", meetingId: "m1", dayIndex: 1, raceNumber: 7,
+    raceName: "Kim Muir Handicap Chase", offTime: "17:30", distanceMiles: "3m 1f",
+    fieldSize: 22, status: "declared", settled: false,
+    runners: [
+      { id: "run_13_1", raceId: "r2_7", horseName: "Janidil", draw: 1, jockey: "D.E. Mullins", trainer: "W.P. Mullins", owner: "Sean Mullins", weight: "11st 0lb", officialRating: 150, form: "1-2121", details: "8yo Bay Gelding", breeding: "Martaline - Janissaire", rawOdds: 8.0, fairOdds: 9.0, isNR: false, pointsWin: 10, pointsPlace: 3, silkColors: ["#1a6b3c", "#f5c518"], quote: "Big field specialist." },
+      { id: "run_13_2", raceId: "r2_7", horseName: "Fury Road", draw: 2, jockey: "P. Mullins", trainer: "W.P. Mullins", owner: "Andrea & Graham Wylie", weight: "11st 8lb", officialRating: 158, form: "1-1213", details: "7yo Bay Gelding", breeding: "Fuisse - Dunbrody Millie", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#8e44ad", "#f5c518"], quote: "Game chaser." },
+      { id: "run_13_3", raceId: "r2_7", horseName: "Appreciate It", draw: 3, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Joe Donnelly", weight: "11st 10lb", officialRating: 162, form: "1-1131", details: "8yo Bay Gelding", breeding: "Sans Frontieres - Yukon Gold", rawOdds: 4.0, fairOdds: 4.5, isNR: false, pointsWin: 20, pointsPlace: 7, silkColors: ["#e74c3c", "#f5c518"], quote: "Former Supreme winner. Back to his best?" },
+    ],
+  },
+
+  // ═══ DAY 3 ═══
+  {
+    id: "r3_1", meetingId: "m1", dayIndex: 2, raceNumber: 1,
+    raceName: "Brown Advisory Novices' Chase", offTime: "13:30", distanceMiles: "3m 1f",
+    fieldSize: 12, status: "declared", settled: false,
+    runners: [
+      { id: "run_14_1", raceId: "r3_1", horseName: "Floueur", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "11st 10lb", officialRating: 162, form: "1-1111", details: "6yo Bay Gelding", breeding: "Walk In The Park - Floreal", rawOdds: 3.0, fairOdds: 3.2, isNR: false, pointsWin: 28, pointsPlace: 9, silkColors: ["#1a6b3c", "#f5c518"], quote: "Could be anything over fences." },
+      { id: "run_14_2", raceId: "r3_1", horseName: "Gold Desert", draw: 2, jockey: "R. Blackmore", trainer: "H. de Bromhead", owner: "Ryanair", weight: "11st 10lb", officialRating: 155, form: "2-1121", details: "6yo Chestnut Gelding", breeding: "Gold Well - Sand Desert", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#f39c12", "#2c3e50"], quote: "Exciting staying novice." },
+    ],
+  },
+  {
+    id: "r3_2", meetingId: "m1", dayIndex: 2, raceNumber: 2,
+    raceName: "Stayers' Hurdle", offTime: "15:00", distanceMiles: "3m 1f 25y",
+    fieldSize: 14, status: "declared", settled: false,
+    runners: [
+      { id: "run_15_1", raceId: "r3_2", horseName: "Flooring Porter", draw: 1, jockey: "J. Slevin", trainer: "G. Cromwell", owner: "Flooring Porter Syndicate", weight: "11st 10lb", officialRating: 163, form: "1-1111", details: "8yo Chestnut Gelding", breeding: "Sans Frontieres - Minnie Jackpot", rawOdds: 3.5, fairOdds: 4.0, isNR: false, pointsWin: 22, pointsPlace: 7, silkColors: ["#e74c3c", "#f5c518"], quote: "King of the stayers." },
+      { id: "run_15_2", raceId: "r3_2", horseName: "Klassical Dream", draw: 2, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Sullivan Bloodstock", weight: "11st 10lb", officialRating: 158, form: "1-2112", details: "8yo Bay Gelding", breeding: "Dream Well - Klassical Lady", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#1a6b3c", "#f5c518"], quote: "Consistent at the highest level." },
+    ],
+  },
+
+  // ═══ DAY 4 ═══
+  {
+    id: "r4_1", meetingId: "m1", dayIndex: 3, raceNumber: 1,
+    raceName: "JCB Triumph Hurdle", offTime: "13:30", distanceMiles: "2m 1f",
+    fieldSize: 16, status: "declared", settled: false,
+    runners: [
+      { id: "run_16_1", raceId: "r4_1", horseName: "Vauban", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Mrs J Donnelly", weight: "11st 0lb", officialRating: 149, form: "1-1111", details: "4yo Bay Gelding", breeding: "No Risk At All - Vadaza", rawOdds: 2.5, fairOdds: 2.8, isNR: false, pointsWin: 32, pointsPlace: 10, silkColors: ["#1a6b3c", "#f5c518"], quote: "Best juvenile hurdler in Europe." },
+      { id: "run_16_2", raceId: "r4_1", horseName: "Pied Piper", draw: 2, jockey: "J. Kennedy", trainer: "W.P. Mullins", owner: "Cheveley Park", weight: "11st 0lb", officialRating: 145, form: "1-1121", details: "4yo Bay Gelding", breeding: "Footstepsinthesand - Piper's Note", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#c0392b", "#ecf0f1"], quote: "Progressive improver." },
+    ],
+  },
+  {
+    id: "r4_2", meetingId: "m1", dayIndex: 3, raceNumber: 2,
+    raceName: "Cheltenham Gold Cup", offTime: "15:30", distanceMiles: "3m 2f 70y",
+    fieldSize: 14, status: "declared", settled: false,
+    runners: [
+      { id: "run_17_1", raceId: "r4_2", horseName: "Galopin Des Champs", draw: 1, jockey: "P. Townend", trainer: "W.P. Mullins", owner: "Cheveley Park Stud", weight: "11st 10lb", officialRating: 178, form: "1-1111", details: "7yo Chestnut Gelding", breeding: "Timos - Coco Des Champs", rawOdds: 1.6, fairOdds: 1.8, isNR: false, pointsWin: 50, pointsPlace: 14, silkColors: ["#1a6b3c", "#f5c518"], quote: "Defending champion. Could be horse of the decade." },
+      { id: "run_17_2", raceId: "r4_2", horseName: "Protektorat", draw: 2, jockey: "H. Cobden", trainer: "D. Skelton", owner: "Mr Al Boum", weight: "11st 10lb", officialRating: 168, form: "1-2131", details: "8yo Grey Gelding", breeding: "Protector - Mme Tara", rawOdds: 8.0, fairOdds: 9.0, isNR: false, pointsWin: 10, pointsPlace: 3, silkColors: ["#95a5a6", "#2c3e50"], quote: "Needs Gold Cup to go his way." },
+      { id: "run_17_3", raceId: "r4_2", horseName: "Bravemansgame", draw: 3, jockey: "H. Cobden", trainer: "P. Nicholls", owner: "Mrs Johnny De La Hey", weight: "11st 10lb", officialRating: 168, form: "1-1211", details: "7yo Bay Gelding", breeding: "Brave Mansonnien - Princess Tara", rawOdds: 5.0, fairOdds: 5.5, isNR: false, pointsWin: 16, pointsPlace: 5, silkColors: ["#e74c3c", "#f5c518"], quote: "Dark horse for the Gold Cup." },
+    ],
+  },
+];
+
+// ─── Picks ────────────────────────────────────────────────────────────────────
+// CODEX: Replace with GET /api/picks?userId=:id
+export const PICKS: Pick[] = [
+  // You — Day 1
+  { userId: "u_you", raceId: "r1_1", runnerId: "run_1_1" },
+  { userId: "u_you", raceId: "r1_2", runnerId: "run_2_1" },
+  { userId: "u_you", raceId: "r1_3", runnerId: "run_3_1" },
+  { userId: "u_you", raceId: "r1_4", runnerId: "run_4_2" },
+  { userId: "u_you", raceId: "r1_5", runnerId: "run_5_2" },
+  { userId: "u_you", raceId: "r1_6", runnerId: "run_6_1" },
+  // You — Day 2
+  { userId: "u_you", raceId: "r2_1", runnerId: "run_7_2" },
+  { userId: "u_you", raceId: "r2_2", runnerId: "run_8_2" },
+  { userId: "u_you", raceId: "r2_3", runnerId: "run_9_1" },
+  { userId: "u_you", raceId: "r2_4", runnerId: "run_10_1" },
+  // Will
+  { userId: "u_will", raceId: "r1_1", runnerId: "run_1_1" },
+  { userId: "u_will", raceId: "r1_2", runnerId: "run_2_1" },
+  { userId: "u_will", raceId: "r1_3", runnerId: "run_3_1" },
+  { userId: "u_will", raceId: "r1_4", runnerId: "run_4_1" },
+  { userId: "u_will", raceId: "r1_5", runnerId: "run_5_1" },
+  { userId: "u_will", raceId: "r1_6", runnerId: "run_6_1" },
+  { userId: "u_will", raceId: "r2_1", runnerId: "run_7_1" },
+  { userId: "u_will", raceId: "r2_2", runnerId: "run_8_1" },
+  { userId: "u_will", raceId: "r2_3", runnerId: "run_9_3" },
+  { userId: "u_will", raceId: "r2_4", runnerId: "run_10_1" },
+  { userId: "u_will", raceId: "r2_5", runnerId: "run_11_1" },
+  // Alex
+  { userId: "u_alex", raceId: "r1_1", runnerId: "run_1_2" },
+  { userId: "u_alex", raceId: "r1_2", runnerId: "run_2_3" },
+  { userId: "u_alex", raceId: "r1_3", runnerId: "run_3_1" },
+  { userId: "u_alex", raceId: "r1_4", runnerId: "run_4_1" },
+  { userId: "u_alex", raceId: "r1_5", runnerId: "run_5_1" },
+  { userId: "u_alex", raceId: "r1_6", runnerId: "run_6_2" },
+  { userId: "u_alex", raceId: "r2_1", runnerId: "run_7_1" },
+  { userId: "u_alex", raceId: "r2_2", runnerId: "run_8_1" },
+  { userId: "u_alex", raceId: "r2_3", runnerId: "run_9_2" },
+  { userId: "u_alex", raceId: "r2_4", runnerId: "run_10_3" },
+  // Ciaran
+  { userId: "u_ciaran", raceId: "r1_1", runnerId: "run_1_3" },
+  { userId: "u_ciaran", raceId: "r1_2", runnerId: "run_2_2" },
+  { userId: "u_ciaran", raceId: "r1_3", runnerId: "run_3_2" },
+  { userId: "u_ciaran", raceId: "r1_4", runnerId: "run_4_1" },
+  { userId: "u_ciaran", raceId: "r1_5", runnerId: "run_5_1" },
+  { userId: "u_ciaran", raceId: "r1_6", runnerId: "run_6_1" },
+  { userId: "u_ciaran", raceId: "r2_1", runnerId: "run_7_3" },
+  { userId: "u_ciaran", raceId: "r2_2", runnerId: "run_8_2" },
+  { userId: "u_ciaran", raceId: "r2_4", runnerId: "run_10_2" },
+  // Sarah
+  { userId: "u_sarah", raceId: "r1_1", runnerId: "run_1_1" },
+  { userId: "u_sarah", raceId: "r1_2", runnerId: "run_2_1" },
+  { userId: "u_sarah", raceId: "r1_3", runnerId: "run_3_1" },
+  { userId: "u_sarah", raceId: "r1_4", runnerId: "run_4_1" },
+  { userId: "u_sarah", raceId: "r1_5", runnerId: "run_5_2" },
+  { userId: "u_sarah", raceId: "r1_6", runnerId: "run_6_2" },
+  { userId: "u_sarah", raceId: "r2_1", runnerId: "run_7_1" },
+  { userId: "u_sarah", raceId: "r2_2", runnerId: "run_8_3" },
+  { userId: "u_sarah", raceId: "r2_4", runnerId: "run_10_1" },
+  // James
+  { userId: "u_james", raceId: "r1_1", runnerId: "run_1_2" },
+  { userId: "u_james", raceId: "r1_2", runnerId: "run_2_2" },
+  { userId: "u_james", raceId: "r1_3", runnerId: "run_3_3" },
+  { userId: "u_james", raceId: "r1_4", runnerId: "run_4_2" },
+  { userId: "u_james", raceId: "r1_5", runnerId: "run_5_2" },
+  { userId: "u_james", raceId: "r1_6", runnerId: "run_6_1" },
+  { userId: "u_james", raceId: "r2_1", runnerId: "run_7_4" },
+  { userId: "u_james", raceId: "r2_2", runnerId: "run_8_1" },
+  { userId: "u_james", raceId: "r2_4", runnerId: "run_10_4" },
+];
+
+// ─── Leaderboard ──────────────────────────────────────────────────────────────
+// CODEX: Replace with GET /api/leaderboard (poll every 15s max per architecture lock)
+export const LEADERBOARD: LeaderboardEntry[] = [
+  { userId: "u_will",   displayName: "Will",   totalPoints: 175, dayPoints: [120, 55], wins: 4, places: 2, dnfCount: 0, position: 1 },
+  { userId: "u_alex",   displayName: "Alex",   totalPoints: 168, dayPoints: [110, 58], wins: 3, places: 2, dnfCount: 1, position: 2 },
+  { userId: "u_ciaran", displayName: "Ciaran", totalPoints: 155, dayPoints: [108, 47], wins: 3, places: 1, dnfCount: 1, position: 3 },
+  { userId: "u_sarah",  displayName: "Sarah",  totalPoints: 148, dayPoints: [112, 36], wins: 4, places: 0, dnfCount: 2, position: 4 },
+  { userId: "u_you",    displayName: "You",    totalPoints: 142, dayPoints: [100, 42], wins: 3, places: 0, dnfCount: 1, position: 5 },
+  { userId: "u_james",  displayName: "James",  totalPoints: 130, dayPoints: [95,  35], wins: 3, places: 0, dnfCount: 3, position: 6 },
+];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+export function getRacesForDay(dayIndex: number): Race[] {
+  return ALL_RACES.filter(r => r.dayIndex === dayIndex).sort((a, b) => a.offTime.localeCompare(b.offTime));
+}
+
+export function getUserPick(userId: string, raceId: string): Pick | undefined {
+  return PICKS.find(p => p.userId === userId && p.raceId === raceId);
+}
+
+export function getRunner(runnerId: string): Runner | undefined {
+  for (const race of ALL_RACES) {
+    const r = race.runners.find(r => r.id === runnerId);
+    if (r) return r;
+  }
+  return undefined;
+}
+
+export function offTimeToMinutes(offTime: string): number {
+  const [h, m] = offTime.split(":").map(Number);
+  return h * 60 + m;
+}
+
+export function getNextRace(): Race | undefined {
+  const todayRaces = getRacesForDay(CURRENT_DAY_INDEX);
+  return todayRaces.find(r => r.status === "declared") || todayRaces.find(r => r.status === "off");
+}
+
+export function getRaceById(id: string): Race | undefined {
+  return ALL_RACES.find(r => r.id === id);
+}
+src/app/pages/Home.tsx
+(Full file — no changes needed from current)
+
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
+import { ChevronRight, Clock, Flag, AlertCircle } from "lucide-react";
+import {
+  MEETING,
+  CURRENT_DAY_INDEX,
+  CURRENT_USER_ID,
+  SIMULATED_NOW_MINUTES,
+  getNextRace,
+  getRacesForDay,
+  getUserPick,
+  getRunner,
+  LEADERBOARD,
+  offTimeToMinutes,
+} from "../data/mockData";
+import { SilkIcon } from "../components/SilkIcon";
+
+function useCountdown(targetMinutes: number) {
+  const [remaining, setRemaining] = useState(() => {
+    const diff = targetMinutes - SIMULATED_NOW_MINUTES;
+    return Math.max(0, diff);
+  });
+
+  useEffect(() => {
+    if (remaining <= 0) return;
+    const id = setInterval(() => {
+      setRemaining(prev => Math.max(0, prev - 1 / 60));
+    }, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const mins = Math.floor(remaining);
+  const secs = Math.floor((remaining - mins) * 60);
+  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+}
+
+export default function Home() {
+  const navigate = useNavigate();
+  const nextRace = getNextRace();
+  const todayRaces = getRacesForDay(CURRENT_DAY_INDEX);
+
+  const nextRaceMinutes = nextRace ? offTimeToMinutes(nextRace.offTime) : SIMULATED_NOW_MINUTES + 60;
+  const countdown = useCountdown(nextRaceMinutes);
+
+  const myPickForNext = nextRace ? getUserPick(CURRENT_USER_ID, nextRace.id) : undefined;
+  const myPickRunnerForNext = myPickForNext ? getRunner(myPickForNext.runnerId) : undefined;
+
+  const top3 = LEADERBOARD.slice(0, 3);
+  const me = LEADERBOARD.find(l => l.userId === CURRENT_USER_ID)!;
+
+  return (
+    <div className="p-3 flex flex-col gap-3">
+
+      {/* ── Next Race Card ── */}
+      <section className="bg-green-900 rounded-xl p-4 shadow-md text-white">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-yellow-400 uppercase" style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.1em" }}>
+            Next Race
+          </span>
+          <span className="bg-green-700 text-green-200 px-2 py-0.5 rounded-full" style={{ fontSize: "10px" }}>
+            {MEETING.days[CURRENT_DAY_INDEX]}
+          </span>
+        </div>
+
+        {nextRace ? (
+          <>
+            <h2 className="text-white mb-1" style={{ fontSize: "16px", fontWeight: 700 }}>
+              {nextRace.raceName}
+            </h2>
+            <p className="text-green-300 mb-3" style={{ fontSize: "12px" }}>
+              {nextRace.offTime} · {nextRace.distanceMiles} · {nextRace.fieldSize} runners
+            </p>
+
+            <div className="flex items-center gap-3 bg-green-800 rounded-lg p-3 mb-3">
+              {myPickRunnerForNext ? (
+                <>
+                  <SilkIcon colors={myPickRunnerForNext.silkColors} size={36} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-yellow-300" style={{ fontSize: "11px", fontWeight: 600 }}>Your Pick</p>
+                    <p className="text-white truncate" style={{ fontSize: "14px", fontWeight: 700 }}>{myPickRunnerForNext.horseName}</p>
+                    <p className="text-green-400" style={{ fontSize: "11px" }}>{myPickRunnerForNext.jockey}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-yellow-400" style={{ fontSize: "10px" }}>To Win</p>
+                    <p className="text-white" style={{ fontSize: "14px", fontWeight: 700 }}>{myPickRunnerForNext.pointsWin}pts</p>
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center gap-2 flex-1">
+                  <AlertCircle size={18} className="text-yellow-400 flex-shrink-0" />
+                  <p className="text-green-300" style={{ fontSize: "13px" }}>No pick made yet</p>
+                  <button
+                    onClick={() => navigate(`/racecard?race=${nextRace.id}`)}
+                    className="ml-auto bg-yellow-400 text-green-900 px-3 py-1.5 rounded-lg"
+                    style={{ fontSize: "12px", fontWeight: 700 }}
+                  >
+                    Pick Now
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center justify-between">
+              {nextRace.status === "off" ? (
+                <span className="flex items-center gap-1.5 text-red-400" style={{ fontSize: "13px", fontWeight: 700 }}>
+                  <Flag size={14} className="animate-pulse" />
+                  Race Off!
+                </span>
+              ) : (
+                <span className="flex items-center gap-1.5 text-green-300" style={{ fontSize: "13px" }}>
+                  <Clock size={14} />
+                  Begins in <span className="text-white ml-1" style={{ fontWeight: 700 }}>{countdown}</span>
+                </span>
+              )}
+              <button
+                onClick={() => navigate(`/racecard?race=${nextRace.id}`)}
+                className="flex items-center gap-1 bg-yellow-400 text-green-900 px-3 py-1.5 rounded-lg"
+                style={{ fontSize: "12px", fontWeight: 700 }}
+              >
+                Go to Race <ChevronRight size={14} />
+              </button>
+            </div>
+          </>
+        ) : (
+          <p className="text-green-300 text-center py-4" style={{ fontSize: "14px" }}>All races complete for today</p>
+        )}
+      </section>
+
+      {/* ── Racing Dashboard ── */}
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 bg-green-50 border-b border-green-100">
+          <h3 className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>Racing Dashboard</h3>
+          <span className="bg-green-900 text-yellow-400 px-2 py-0.5 rounded-full" style={{ fontSize: "10px", fontWeight: 600 }}>
+            Day {CURRENT_DAY_INDEX + 1}
+          </span>
+        </div>
+
+        {todayRaces.map((race) => {
+          const pick = getUserPick(CURRENT_USER_ID, race.id);
+          const runner = pick ? getRunner(pick.runnerId) : undefined;
+
+          return (
+            <div key={race.id} className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0">
+              <div className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                race.status === "result" ? "bg-green-500" :
+                race.status === "off" ? "bg-red-500 animate-pulse" : "bg-gray-300"
+              }`} />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-green-900" style={{ fontSize: "12px", fontWeight: 700 }}>{race.offTime}</span>
+                  <span className="text-gray-500 truncate" style={{ fontSize: "11px" }}>{race.raceName}</span>
+                </div>
+                {runner ? (
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <SilkIcon colors={runner.silkColors} size={14} />
+                    <span className="text-gray-700 truncate" style={{ fontSize: "11px" }}>{runner.horseName}</span>
+                    {race.status === "result" && runner.pointsAwarded !== undefined && (
+                      <span className="ml-auto flex-shrink-0 px-1.5 py-0.5 rounded text-white"
+                        style={{ fontSize: "10px", fontWeight: 700, backgroundColor: runner.pointsAwarded > 0 ? "#16a34a" : "#dc2626" }}>
+                        {runner.pointsAwarded > 0 ? `+${runner.pointsAwarded}` : `${runner.pointsAwarded}`}pts
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-gray-400" style={{ fontSize: "11px" }}>No pick</span>
+                    {race.status === "declared" && (
+                      <button
+                        onClick={() => navigate(`/racecard?race=${race.id}`)}
+                        className="bg-green-500 text-white px-2 py-0.5 rounded"
+                        style={{ fontSize: "10px", fontWeight: 600 }}
+                      >
+                        Pick
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => race.status === "result"
+                  ? navigate(`/results?race=${race.id}`)
+                  : navigate(`/racecard?race=${race.id}`)
+                }
+                className="text-green-700"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          );
+        })}
+      </section>
+
+      {/* ── Leaderboard Preview ── */}
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 bg-yellow-50 border-b border-yellow-100">
+          <h3 className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>🏆 Leaderboard</h3>
+          <button onClick={() => navigate("/standings")} className="flex items-center gap-1 text-green-700" style={{ fontSize: "11px", fontWeight: 600 }}>
+            Full Standings <ChevronRight size={12} />
+          </button>
+        </div>
+        {top3.map((entry, i) => (
+          <div key={entry.userId} className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+            <span className="w-7 h-7 rounded-full flex items-center justify-center text-white flex-shrink-0"
+              style={{ fontSize: "12px", fontWeight: 700, backgroundColor: i === 0 ? "#c9a227" : i === 1 ? "#9ca3af" : "#b87333" }}>
+              {i + 1}
+            </span>
+            <span className="flex-1 text-gray-800" style={{ fontSize: "14px", fontWeight: 600 }}>{entry.displayName}</span>
+            <span className="text-green-700" style={{ fontSize: "14px", fontWeight: 700 }}>{entry.totalPoints}pts</span>
+          </div>
+        ))}
+        <div className="flex items-center gap-3 px-4 py-3 bg-green-50">
+          <span className="w-7 h-7 rounded-full flex items-center justify-center bg-green-900 text-yellow-400 flex-shrink-0" style={{ fontSize: "12px", fontWeight: 700 }}>
+            {me.position}
+          </span>
+          <span className="flex-1 text-green-900" style={{ fontSize: "14px", fontWeight: 700 }}>You</span>
+          <span className="text-green-700" style={{ fontSize: "14px", fontWeight: 700 }}>{me.totalPoints}pts</span>
+          <button onClick={() => navigate("/standings")} className="flex items-center gap-1 bg-green-900 text-yellow-400 px-2 py-1 rounded-lg" style={{ fontSize: "10px", fontWeight: 700 }}>
+            Go To <ChevronRight size={11} />
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+src/app/pages/RacePicks.tsx
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { ChevronRight, CheckCircle2, AlertCircle } from "lucide-react";
+import {
+  MEETING, CURRENT_DAY_INDEX, CURRENT_USER_ID,
+  getRacesForDay, getUserPick, getRunner,
+} from "../data/mockData";
+import { SilkIcon } from "../components/SilkIcon";
+
+export default function RacePicks() {
+  const [selectedDay, setSelectedDay] = useState(CURRENT_DAY_INDEX);
+  const navigate = useNavigate();
+  const races = getRacesForDay(selectedDay);
+
+  return (
+    <div className="flex flex-col">
+      {/* Day Tabs */}
+      <div className="flex bg-white border-b border-gray-200 sticky top-0 z-10">
+        {MEETING.days.map((day, i) => (
+          <button key={i} onClick={() => setSelectedDay(i)}
+            className={`flex-1 py-3 flex flex-col items-center transition-colors ${
+              selectedDay === i ? "border-b-2 border-yellow-400 bg-green-50" : "text-gray-500"
+            }`}
+          >
+            <span style={{ fontSize: "9px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              className={selectedDay === i ? "text-green-900" : "text-gray-400"}>
+              {i === CURRENT_DAY_INDEX ? "Today" : `Day ${i + 1}`}
+            </span>
+            <span style={{ fontSize: "11px", fontWeight: 700 }}
+              className={selectedDay === i ? "text-green-900" : "text-gray-500"}>
+              {day.split(" ")[0]} {day.split(" ")[1]}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Race List */}
+      <div className="p-3 flex flex-col gap-2">
+        {races.length === 0 && (
+          <p className="text-center text-gray-400 py-8" style={{ fontSize: "14px" }}>No races for this day yet.</p>
+        )}
+        {races.map((race) => {
+          const pick = getUserPick(CURRENT_USER_ID, race.id);
+          const runner = pick ? getRunner(pick.runnerId) : undefined;
+          const isResult = race.status === "result";
+          const isOff = race.status === "off";
+
+          return (
+            <button key={race.id}
+              onClick={() => isResult ? navigate(`/results?race=${race.id}`) : navigate(`/racecard?race=${race.id}`)}
+              className="bg-white rounded-xl shadow-sm overflow-hidden text-left w-full"
+            >
+              <div className={`flex items-center justify-between px-4 py-2.5 ${
+                isResult ? "bg-green-50" : isOff ? "bg-red-50" : "bg-gray-50"
+              } border-b border-gray-100`}>
+                <div className="flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded-full text-white"
+                    style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase",
+                      backgroundColor: isResult ? "#16a34a" : isOff ? "#dc2626" : "#6b7280" }}>
+                    {isResult ? "Result" : isOff ? "Off" : "Declared"}
+                  </span>
+                  <span className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>{race.offTime}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <span style={{ fontSize: "10px" }}>{race.distanceMiles}</span>
+                  <span style={{ fontSize: "10px" }}>{race.fieldSize} ran</span>
+                  <ChevronRight size={14} className="text-gray-400" />
+                </div>
+              </div>
+
+              <div className="px-4 py-3">
+                <p className="text-gray-800 mb-2" style={{ fontSize: "13px", fontWeight: 600 }}>{race.raceName}</p>
+                {runner ? (
+                  <div className="flex items-center gap-3">
+                    <SilkIcon colors={runner.silkColors} size={32} />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-gray-900 truncate" style={{ fontSize: "14px", fontWeight: 700 }}>{runner.horseName}</p>
+                      <p className="text-gray-500" style={{ fontSize: "11px" }}>{runner.jockey} · {runner.trainer}</p>
+                    </div>
+                    {isResult ? (
+                      <div className="text-right flex-shrink-0">
+                        {runner.finishPosition && (
+                          <span className="px-2 py-1 rounded-lg text-white"
+                            style={{ fontSize: "12px", fontWeight: 700,
+                              backgroundColor: runner.finishPosition === 1 ? "#c9a227" : runner.finishPosition <= 3 ? "#16a34a" : "#6b7280" }}>
+                            {runner.finishStatus !== "finished"
+                              ? runner.finishStatus?.replace("_", " ").toUpperCase()
+                              : `${runner.finishPosition}${["st","nd","rd"][runner.finishPosition-1] || "th"}`}
+                          </span>
+                        )}
+                        {runner.pointsAwarded !== undefined && (
+                          <p className={runner.pointsAwarded > 0 ? "text-green-600" : "text-red-500"}
+                            style={{ fontSize: "12px", fontWeight: 700, marginTop: "2px" }}>
+                            {runner.pointsAwarded > 0 ? `+${runner.pointsAwarded}` : runner.pointsAwarded}pts
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <CheckCircle2 size={20} className="text-green-500 flex-shrink-0" />
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    {race.status === "declared" ? (
+                      <>
+                        <AlertCircle size={16} className="text-orange-400" />
+                        <span className="text-gray-400" style={{ fontSize: "12px" }}>No pick made</span>
+                        <span className="ml-auto bg-green-600 text-white px-3 py-1.5 rounded-lg" style={{ fontSize: "12px", fontWeight: 700 }}>
+                          Pick Now
+                        </span>
+                      </>
+                    ) : (
+                      <span className="text-gray-400" style={{ fontSize: "12px" }}>No pick recorded</span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+src/app/pages/Racecard.tsx
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
+import { ChevronDown, ChevronUp, Check, Lock } from "lucide-react";
+import {
+  CURRENT_DAY_INDEX, CURRENT_USER_ID, SIMULATED_NOW_MINUTES,
+  getRacesForDay, offTimeToMinutes, PICKS, type Runner,
+} from "../data/mockData";
+import { SilkIcon } from "../components/SilkIcon";
+
+function HorseRow({ runner, isPicked, isLocked, onPick }: {
+  runner: Runner; isPicked: boolean; isLocked: boolean; onPick: () => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className={`border-b border-gray-100 last:border-0 transition-colors ${isPicked ? "bg-green-50" : ""}`}>
+      <div className="flex items-center gap-2 px-3 py-3">
+        <button onClick={() => setExpanded(e => !e)} className="flex items-center gap-2 flex-1 min-w-0 text-left">
+          <SilkIcon colors={runner.silkColors} size={28} />
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1">
+              <span className="text-gray-900 truncate" style={{ fontSize: "13px", fontWeight: 700 }}>{runner.horseName}</span>
+              {runner.isNR && <span className="bg-red-100 text-red-600 px-1.5 rounded" style={{ fontSize: "9px", fontWeight: 600 }}>NR</span>}
+            </div>
+            <div className="flex gap-2 text-gray-500" style={{ fontSize: "10px" }}>
+              <span>{runner.trainer}</span><span>·</span><span>{runner.jockey}</span>
+            </div>
+          </div>
+          <div className="flex flex-col items-end flex-shrink-0 mr-1">
+            <span className="text-green-700" style={{ fontSize: "10px", fontWeight: 600 }}>W: {runner.pointsWin}pts</span>
+            <span className="text-blue-600" style={{ fontSize: "10px" }}>P: {runner.pointsPlace}pts</span>
+          </div>
+          {expanded ? <ChevronUp size={14} className="text-gray-400 flex-shrink-0" /> : <ChevronDown size={14} className="text-gray-400 flex-shrink-0" />}
+        </button>
+        {isLocked ? (
+          <div className="flex-shrink-0 flex items-center justify-center w-14 h-8 rounded-lg bg-gray-200">
+            <Lock size={12} className="text-gray-400" />
+          </div>
+        ) : isPicked ? (
+          <button onClick={onPick} className="flex-shrink-0 flex items-center gap-1 w-14 h-8 rounded-lg justify-center bg-green-600 text-white" style={{ fontSize: "11px", fontWeight: 700 }}>
+            <Check size={12} /> Picked
+          </button>
+        ) : (
+          <button onClick={onPick} className="flex-shrink-0 w-14 h-8 rounded-lg border-2 border-green-600 text-green-700" style={{ fontSize: "11px", fontWeight: 700 }}>
+            Pick
+          </button>
+        )}
+      </div>
+
+      {expanded && (
+        <div className="mx-3 mb-3 bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <div className="flex flex-col items-center py-4 bg-gradient-to-b from-green-900 to-green-800">
+            <SilkIcon colors={runner.silkColors} size={56} />
+            <p className="text-white mt-2" style={{ fontSize: "15px", fontWeight: 700 }}>{runner.horseName}</p>
+            <p className="text-green-300" style={{ fontSize: "11px" }}>{runner.details}</p>
+          </div>
+          <div className="p-3 grid grid-cols-2 gap-2">
+            {[
+              { label: "Form", value: runner.form },
+              { label: "OR", value: runner.officialRating },
+              { label: "Jockey", value: runner.jockey },
+              { label: "Trainer", value: runner.trainer },
+              { label: "Owner", value: runner.owner },
+              { label: "Weight", value: runner.weight },
+              { label: "Breeding", value: runner.breeding },
+            ].map(({ label, value }) => (
+              <div key={label} className="bg-gray-50 rounded-lg p-2">
+                <p className="text-gray-400" style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>{label}</p>
+                <p className="text-gray-800" style={{ fontSize: "12px", fontWeight: 600 }}>{value}</p>
+              </div>
+            ))}
+          </div>
+          {runner.quote && (
+            <div className="mx-3 mb-3 p-3 bg-yellow-50 rounded-r-lg" style={{ borderLeftWidth: "3px", borderLeftColor: "#c9a227" }}>
+              <p className="text-gray-600 italic" style={{ fontSize: "11px" }}>"{runner.quote}"</p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Racecard() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const todayRaces = getRacesForDay(CURRENT_DAY_INDEX);
+  const defaultRaceId = searchParams.get("race") || (todayRaces.find(r => r.status === "declared")?.id ?? todayRaces[0]?.id);
+  const [activeRaceId, setActiveRaceId] = useState(defaultRaceId);
+
+  const [localPicks, setLocalPicks] = useState<Record<string, string>>(() => {
+    const map: Record<string, string> = {};
+    PICKS.filter(p => p.userId === CURRENT_USER_ID).forEach(p => { map[p.raceId] = p.runnerId; });
+    return map;
+  });
+
+  const activeRace = todayRaces.find(r => r.id === activeRaceId) ?? todayRaces[0];
+  const isLocked = activeRace
+    ? SIMULATED_NOW_MINUTES >= offTimeToMinutes(activeRace.offTime) || activeRace.status === "result"
+    : false;
+
+  function handlePick(runnerId: string) {
+    if (!activeRace || isLocked) return;
+    setLocalPicks(prev => {
+      if (prev[activeRace.id] === runnerId) { const next = { ...prev }; delete next[activeRace.id]; return next; }
+      return { ...prev, [activeRace.id]: runnerId };
+    });
+  }
+
+  return (
+    <div className="flex flex-col">
+      <div className="flex gap-0 overflow-x-auto bg-white border-b border-gray-200 sticky top-0 z-10 scrollbar-hide">
+        {todayRaces.map(race => {
+          const active = race.id === activeRaceId;
+          const locked = SIMULATED_NOW_MINUTES >= offTimeToMinutes(race.offTime);
+          return (
+            <button key={race.id}
+              onClick={() => { setActiveRaceId(race.id); navigate(`/racecard?race=${race.id}`, { replace: true }); }}
+              className={`flex flex-col items-center px-3 py-2.5 flex-shrink-0 border-b-2 transition-colors ${active ? "border-yellow-400 bg-green-50" : "border-transparent"}`}
+            >
+              <span style={{ fontSize: "12px", fontWeight: active ? 700 : 500 }} className={active ? "text-green-900" : "text-gray-500"}>
+                {race.offTime}
+              </span>
+              <div className="flex items-center gap-1 mt-0.5">
+                <span className={`w-1.5 h-1.5 rounded-full ${race.status === "result" ? "bg-green-500" : race.status === "off" ? "bg-red-500" : "bg-gray-300"}`} />
+                {locked && <Lock size={9} className="text-gray-400" />}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+
+      {activeRace && (
+        <div className="px-4 py-3 bg-green-900 text-white">
+          <div className="flex items-start justify-between">
+            <div>
+              <h2 className="text-white" style={{ fontSize: "15px", fontWeight: 700 }}>{activeRace.raceName}</h2>
+              <p className="text-green-300" style={{ fontSize: "11px" }}>
+                {activeRace.offTime} · {activeRace.distanceMiles} · {activeRace.fieldSize} runners
+              </p>
+            </div>
+            <div className="flex flex-col items-end gap-1">
+              <span className="px-2 py-0.5 rounded-full text-white"
+                style={{ fontSize: "9px", fontWeight: 700, textTransform: "uppercase",
+                  backgroundColor: activeRace.status === "result" ? "#16a34a" : activeRace.status === "off" ? "#dc2626" : "#6b7280" }}>
+                {activeRace.status}
+              </span>
+              {isLocked && (
+                <span className="flex items-center gap-1 text-yellow-300" style={{ fontSize: "10px" }}>
+                  <Lock size={10} /> Picks Locked
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeRace && (
+        <div className="bg-white">
+          {activeRace.runners.map(runner => (
+            <HorseRow key={runner.id} runner={runner}
+              isPicked={localPicks[activeRace.id] === runner.id}
+              isLocked={isLocked}
+              onPick={() => handlePick(runner.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {activeRace && localPicks[activeRace.id] && !isLocked && (
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-md px-3">
+          <div className="bg-green-600 text-white rounded-xl p-3 flex items-center gap-2 shadow-lg">
+            <Check size={16} />
+            <span style={{ fontSize: "13px", fontWeight: 600 }}>
+              Pick saved: {activeRace.runners.find(r => r.id === localPicks[activeRace.id])?.horseName}
+            </span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+src/app/pages/Results.tsx
+import { useState } from "react";
+import { useSearchParams } from "react-router";
+import { AlertCircle } from "lucide-react";
+import {
+  MEETING, CURRENT_DAY_INDEX, getRacesForDay, USERS, PICKS, type Runner,
+} from "../data/mockData";
+import { SilkIcon } from "../components/SilkIcon";
+
+const ORDINAL = ["1st","2nd","3rd","4th","5th","6th","7th","8th","9th","10th"];
+const DNF_LABEL: Record<string, string> = { pulled_up: "PU", unseated: "U", fell: "F", refused: "R", dnf: "DNF" };
+
+function positionLabel(runner: Runner): string {
+  if (!runner.finishStatus || runner.finishStatus === "finished")
+    return ORDINAL[(runner.finishPosition ?? 1) - 1] ?? `${runner.finishPosition}th`;
+  return DNF_LABEL[runner.finishStatus] ?? "DNF";
+}
+function positionBg(runner: Runner): string {
+  if (runner.finishStatus && runner.finishStatus !== "finished") return "#dc2626";
+  const pos = runner.finishPosition ?? 99;
+  if (pos === 1) return "#c9a227";
+  if (pos === 2) return "#9ca3af";
+  if (pos === 3) return "#b87333";
+  return "#e5e7eb";
+}
+function positionColor(runner: Runner): string {
+  if (runner.finishStatus && runner.finishStatus !== "finished") return "#fff";
+  return (runner.finishPosition ?? 99) <= 3 ? "#fff" : "#374151";
+}
+
+export default function Results() {
+  const [searchParams] = useSearchParams();
+  const [selectedDay, setSelectedDay] = useState(CURRENT_DAY_INDEX);
+  const races = getRacesForDay(selectedDay);
+
+  const defaultRaceId = (() => {
+    const fromUrl = searchParams.get("race");
+    if (fromUrl) return fromUrl;
+    const results = races.filter(r => r.status === "result");
+    return results[results.length - 1]?.id ?? races[0]?.id ?? "";
+  })();
+  const [activeRaceId, setActiveRaceId] = useState(defaultRaceId);
+  const activeRace = races.find(r => r.id === activeRaceId) ?? races[0];
+
+  return (
+    <div className="flex flex-col min-h-full">
+      {/* Day Tabs */}
+      <div className="flex bg-white border-b border-gray-200 sticky top-0 z-10">
+        {MEETING.days.map((day, i) => (
+          <button key={i}
+            onClick={() => {
+              setSelectedDay(i);
+              const dr = getRacesForDay(i);
+              const results = dr.filter(r => r.status === "result");
+              setActiveRaceId(results[results.length - 1]?.id ?? dr[0]?.id ?? "");
+            }}
+            className={`flex-1 py-2.5 flex flex-col items-center border-b-2 transition-colors ${
+              selectedDay === i ? "border-yellow-400 bg-green-50" : "border-transparent"
+            }`}
+          >
+            <span style={{ fontSize: "9px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}
+              className={selectedDay === i ? "text-green-700" : "text-gray-400"}>
+              {i === CURRENT_DAY_INDEX ? "Today" : `Day ${i + 1}`}
+            </span>
+            <span style={{ fontSize: "11px", fontWeight: 700 }}
+              className={selectedDay === i ? "text-green-900" : "text-gray-500"}>
+              {day.split(" ")[0]} {day.split(" ")[1]}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Race Time Tabs */}
+      <div className="flex overflow-x-auto bg-white border-b border-gray-100 scrollbar-hide">
+        {races.map(race => {
+          const active = race.id === activeRaceId;
+          return (
+            <button key={race.id} onClick={() => setActiveRaceId(race.id)}
+              className={`flex flex-col items-center px-4 py-2 flex-shrink-0 border-b-2 transition-colors ${
+                active ? "border-yellow-400 bg-green-50" : "border-transparent"
+              }`}
+            >
+              <span style={{ fontSize: "13px", fontWeight: active ? 700 : 500 }}
+                className={active ? "text-green-900" : "text-gray-500"}>{race.offTime}</span>
+              <span className={`w-1.5 h-1.5 rounded-full mt-0.5 ${
+                race.status === "result" ? "bg-green-500" : race.status === "off" ? "bg-red-500 animate-pulse" : "bg-gray-300"
+              }`} />
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content */}
+      {!activeRace ? (
+        <p className="text-center text-gray-400 py-12" style={{ fontSize: "14px" }}>No races found.</p>
+      ) : activeRace.status !== "result" ? (
+        <div className="flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+            <AlertCircle size={32} className="text-gray-300" />
+          </div>
+          <div>
+            <p className="text-gray-700" style={{ fontSize: "16px", fontWeight: 700 }}>
+              {activeRace.status === "off" ? "Race In Progress" : "Race Not Completed"}
+            </p>
+            <p className="text-gray-400 mt-1" style={{ fontSize: "13px" }}>Results Not Official</p>
+          </div>
+          <div className="bg-gray-50 rounded-xl p-4 w-full max-w-xs">
+            <p className="text-gray-600" style={{ fontSize: "13px", fontWeight: 600 }}>{activeRace.raceName}</p>
+            <p className="text-gray-400 mt-0.5" style={{ fontSize: "11px" }}>
+              {activeRace.offTime} · {activeRace.distanceMiles} · {activeRace.fieldSize} runners
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="p-3">
+          <div className="bg-green-900 rounded-xl px-4 py-3 mb-3">
+            <p className="text-yellow-400" style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em" }}>Official Result</p>
+            <h2 className="text-white mt-0.5" style={{ fontSize: "15px", fontWeight: 700 }}>{activeRace.raceName}</h2>
+            <p className="text-green-300" style={{ fontSize: "11px" }}>{activeRace.offTime} · {activeRace.distanceMiles} · {activeRace.fieldSize} ran</p>
+          </div>
+
+          {/* Column headers */}
+          <div className="grid items-center px-2 py-2 bg-green-900 rounded-t-lg" style={{ gridTemplateColumns: "3rem 1fr 4.5rem 5rem" }}>
+            <span className="text-green-300" style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>Pos</span>
+            <span className="text-green-300" style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>Horse</span>
+            <span className="text-green-300 text-center" style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>Points</span>
+            <span className="text-green-300 text-center" style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>Picked By</span>
+          </div>
+
+          <div className="bg-white rounded-b-lg overflow-hidden shadow-sm">
+            {[...activeRace.runners]
+              .filter(r => !r.isNR)
+              .sort((a, b) => {
+                const aPos = a.finishStatus && a.finishStatus !== "finished" ? 999 : (a.finishPosition ?? 998);
+                const bPos = b.finishStatus && b.finishStatus !== "finished" ? 999 : (b.finishPosition ?? 998);
+                return aPos - bPos;
+              })
+              .map((runner, idx) => {
+                const isDNF = runner.finishStatus && runner.finishStatus !== "finished";
+                const pickers = PICKS.filter(p => p.runnerId === runner.id)
+                  .map(p => USERS.find(u => u.id === p.userId)?.displayName ?? "?");
+                return (
+                  <div key={runner.id}
+                    className={`grid items-center border-b border-gray-100 last:border-0 ${idx % 2 === 0 ? "bg-white" : "bg-gray-50/50"}`}
+                    style={{ gridTemplateColumns: "3rem 1fr 4.5rem 5rem" }}
+                  >
+                    <div className="flex flex-col items-center justify-center py-3 px-1 border-r border-gray-100">
+                      <span className="w-9 h-6 rounded flex items-center justify-center"
+                        style={{ fontSize: "11px", fontWeight: 700, backgroundColor: positionBg(runner), color: positionColor(runner) }}>
+                        {positionLabel(runner)}
+                      </span>
+                      {!isDNF && runner.lengths !== undefined && runner.finishPosition !== 1 && (
+                        <span className="text-gray-400 mt-0.5" style={{ fontSize: "9px" }}>{runner.lengths}L</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 py-3 px-2 min-w-0 border-r border-gray-100">
+                      <SilkIcon colors={runner.silkColors} size={22} />
+                      <div className="min-w-0">
+                        <p className="text-gray-900 truncate" style={{ fontSize: "12px", fontWeight: 600 }}>{runner.horseName}</p>
+                        <p className="text-gray-400 truncate" style={{ fontSize: "10px" }}>{runner.jockey}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center py-3 border-r border-gray-100">
+                      {runner.pointsAwarded !== undefined ? (
+                        <span style={{ fontSize: "13px", fontWeight: 700,
+                          color: runner.pointsAwarded > 0 ? "#16a34a" : runner.pointsAwarded < 0 ? "#dc2626" : "#9ca3af" }}>
+                          {runner.pointsAwarded > 0 ? `+${runner.pointsAwarded}` : runner.pointsAwarded === 0 ? "0" : `${runner.pointsAwarded}`}
+                        </span>
+                      ) : <span className="text-gray-300" style={{ fontSize: "12px" }}>—</span>}
+                    </div>
+                    <div className="flex flex-col items-center justify-center gap-1 py-2 px-1">
+                      {pickers.length > 0
+                        ? pickers.map(name => (
+                          <span key={name} className="bg-green-100 text-green-800 px-1.5 py-0.5 rounded"
+                            style={{ fontSize: "9px", fontWeight: 600, lineHeight: 1.4 }}>{name}</span>
+                        ))
+                        : <span className="text-gray-300" style={{ fontSize: "11px" }}>—</span>}
+                    </div>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+src/app/pages/Standings.tsx
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { ChevronRight } from "lucide-react";
+import { MEETING, CURRENT_DAY_INDEX, CURRENT_USER_ID, LEADERBOARD, type LeaderboardEntry } from "../data/mockData";
+
+const ORDINAL_MEDAL = ["🥇", "🥈", "🥉"];
+
+export default function Standings() {
+  const [selectedTab, setSelectedTab] = useState(CURRENT_DAY_INDEX);
+  const navigate = useNavigate();
+  const isOverall = selectedTab === MEETING.days.length;
+  const DAY_TABS = [...MEETING.days, "Overall"];
+
+  const sorted = [...LEADERBOARD].sort((a, b) =>
+    isOverall ? b.totalPoints - a.totalPoints : (b.dayPoints[selectedTab] ?? 0) - (a.dayPoints[selectedTab] ?? 0)
+  );
+
+  function getPoints(entry: LeaderboardEntry): number {
+    return isOverall ? entry.totalPoints : (entry.dayPoints[selectedTab] ?? 0);
+  }
+
+  return (
+    <div className="flex flex-col min-h-full">
+      {/* Day + Overall Tabs */}
+      <div className="flex overflow-x-auto bg-white border-b border-gray-200 sticky top-0 z-10 scrollbar-hide">
+        {DAY_TABS.map((tab, i) => {
+          const active = selectedTab === i;
+          const isOv = i === MEETING.days.length;
+          return (
+            <button key={i} onClick={() => setSelectedTab(i)}
+              className={`flex-shrink-0 flex flex-col items-center px-4 py-2.5 border-b-2 transition-colors ${active ? "border-yellow-400 bg-green-50" : "border-transparent"}`}
+            >
+              {isOv ? (
+                <span style={{ fontSize: "12px", fontWeight: active ? 700 : 500 }}
+                  className={active ? "text-green-900" : "text-gray-500"}>Overall</span>
+              ) : (
+                <>
+                  <span style={{ fontSize: "9px", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}
+                    className={active ? "text-green-700" : "text-gray-400"}>
+                    {i === CURRENT_DAY_INDEX ? "Today" : `Day ${i + 1}`}
+                  </span>
+                  <span style={{ fontSize: "11px", fontWeight: active ? 700 : 500 }}
+                    className={active ? "text-green-900" : "text-gray-500"}>
+                    {tab.split(" ")[0]} {tab.split(" ")[1]}
+                  </span>
+                </>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="bg-green-900 px-4 py-3">
+        <h2 className="text-white" style={{ fontSize: "15px", fontWeight: 700 }}>
+          {isOverall ? "Festival Standings" : `${MEETING.days[selectedTab]} Standings`}
+        </h2>
+        <p className="text-green-300" style={{ fontSize: "11px" }}>{MEETING.festival} · Tap a player to view their picks</p>
+      </div>
+
+      <div className="p-3">
+        {/* Column headers */}
+        <div className="grid items-center px-3 py-2 bg-green-900 rounded-t-lg"
+          style={{ gridTemplateColumns: "2.2rem 1fr 4rem 3rem 3.5rem 3.5rem" }}>
+          {["Pos","Name","Points","Wins","Places","DNF's"].map((h, i) => (
+            <span key={h} className={`text-green-300 ${i >= 2 ? "text-center" : ""} ${i === 2 ? "text-right" : ""}`}
+              style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>{h}</span>
+          ))}
+        </div>
+
+        <div className="bg-white rounded-b-lg overflow-hidden shadow-sm">
+          {sorted.map((entry, i) => {
+            const isMe = entry.userId === CURRENT_USER_ID;
+            const pts = getPoints(entry);
+            return (
+              <button key={entry.userId}
+                onClick={() => navigate(`/opponent?user=${entry.userId}`)}
+                className={`w-full grid items-center px-3 py-0 border-b border-gray-100 last:border-0 transition-colors active:bg-green-50 ${
+                  isMe ? "bg-green-50" : i % 2 === 0 ? "bg-white" : "bg-gray-50/40"
+                }`}
+                style={{ gridTemplateColumns: "2.2rem 1fr 4rem 3rem 3.5rem 3.5rem" }}
+              >
+                <div className="py-3.5 flex items-center">
+                  {i < 3
+                    ? <span style={{ fontSize: "18px", lineHeight: 1 }}>{ORDINAL_MEDAL[i]}</span>
+                    : <span className="w-6 h-6 rounded-full flex items-center justify-center bg-gray-200 text-gray-600"
+                        style={{ fontSize: "11px", fontWeight: 700 }}>{i + 1}</span>}
+                </div>
+                <div className="py-3.5 flex items-center gap-1.5 min-w-0">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 ${isMe ? "bg-green-900" : "bg-gray-200"}`}>
+                    <span className={isMe ? "text-yellow-400" : "text-gray-600"} style={{ fontSize: "11px", fontWeight: 700 }}>
+                      {entry.displayName[0]}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <span className={`block truncate ${isMe ? "text-green-900" : "text-green-700"}`}
+                      style={{ fontSize: "13px", fontWeight: 700, textDecoration: "underline", textDecorationStyle: "dotted" }}>
+                      {entry.displayName}
+                    </span>
+                    {isMe && <span className="text-green-500" style={{ fontSize: "9px", fontWeight: 600 }}>You</span>}
+                  </div>
+                  <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
+                </div>
+                <div className="py-3.5 text-right">
+                  <span className={isMe ? "text-green-700" : "text-gray-800"} style={{ fontSize: "13px", fontWeight: 700 }}>{pts}</span>
+                  <span className="text-gray-400" style={{ fontSize: "9px" }}>pts</span>
+                </div>
+                <div className="py-3.5 text-center">
+                  <span className="text-yellow-600" style={{ fontSize: "13px", fontWeight: 700 }}>{entry.wins}</span>
+                </div>
+                <div className="py-3.5 text-center">
+                  <span className="text-blue-600" style={{ fontSize: "13px", fontWeight: 600 }}>{entry.places}</span>
+                </div>
+                <div className="py-3.5 text-center">
+                  <span className={entry.dnfCount > 0 ? "text-red-500" : "text-gray-400"} style={{ fontSize: "13px", fontWeight: 600 }}>{entry.dnfCount}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex gap-4 justify-center mt-3">
+          {[{ color: "text-yellow-600", label: "Wins" }, { color: "text-blue-600", label: "Places" }, { color: "text-red-500", label: "DNF's" }]
+            .map(({ color, label }) => (
+              <div key={label} className="flex items-center gap-1">
+                <span className={color} style={{ fontSize: "11px", fontWeight: 700 }}>●</span>
+                <span className="text-gray-500" style={{ fontSize: "11px" }}>{label}</span>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+src/app/pages/OpponentView.tsx
+import { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router";
+import { ChevronLeft, ChevronDown, EyeOff, Clock } from "lucide-react";
+import {
+  MEETING, CURRENT_DAY_INDEX, CURRENT_USER_ID, SIMULATED_NOW_MINUTES,
+  USERS, getRacesForDay, getUserPick, getRunner, offTimeToMinutes,
+  LEADERBOARD, type Race,
+} from "../data/mockData";
+import { SilkIcon } from "../components/SilkIcon";
+
+const ORDINAL = ["1st","2nd","3rd","4th","5th","6th","7th"];
+const DNF_LABEL: Record<string, string> = { pulled_up: "PU", unseated: "U", fell: "F", refused: "R", dnf: "DNF" };
+
+function finishLabel(runner: { finishPosition?: number; finishStatus?: string }): string {
+  if (!runner.finishStatus || runner.finishStatus === "finished")
+    return ORDINAL[(runner.finishPosition ?? 1) - 1] ?? `${runner.finishPosition}th`;
+  return DNF_LABEL[runner.finishStatus] ?? "DNF";
+}
+
+function minutesToHHMM(mins: number): string {
+  const h = Math.floor(mins / 60);
+  const m = Math.floor(mins % 60);
+  return `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+}
+
+export default function OpponentView() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const [selectedUserId, setSelectedUserId] = useState(searchParams.get("user") ?? "u_will");
+  const [selectedDay, setSelectedDay] = useState(CURRENT_DAY_INDEX);
+  const [showPicker, setShowPicker] = useState(false);
+
+  const DAY_TABS = [...MEETING.days, "Overall"];
+  const isOverall = selectedDay === MEETING.days.length;
+  const selectedUser = USERS.find(u => u.id === selectedUserId)!;
+  const isViewingSelf = selectedUserId === CURRENT_USER_ID;
+  const entry = LEADERBOARD.find(l => l.userId === selectedUserId);
+  const races = isOverall ? [] : getRacesForDay(selectedDay);
+
+  return (
+    <div className="flex flex-col min-h-full">
+      {/* Top Bar */}
+      <div className="bg-green-900 px-4 py-3 flex items-center gap-3">
+        <button onClick={() => navigate("/standings")} className="text-green-300 flex-shrink-0"><ChevronLeft size={22} /></button>
+        <h2 className="text-white flex-1" style={{ fontSize: "15px", fontWeight: 700 }}>Opponent View</h2>
+        <button onClick={() => navigate("/standings")}
+          className="flex items-center gap-1 bg-green-700 text-green-200 px-3 py-1.5 rounded-lg flex-shrink-0"
+          style={{ fontSize: "11px", fontWeight: 600 }}>
+          <ChevronLeft size={12} /> Standings
+        </button>
+      </div>
+
+      {/* Player Selector */}
+      <div className="bg-white border-b border-gray-200 relative z-20">
+        <button onClick={() => setShowPicker(p => !p)} className="w-full flex items-center gap-3 px-4 py-3">
+          <div className="w-11 h-11 rounded-full bg-green-900 flex items-center justify-center flex-shrink-0 shadow">
+            <span className="text-yellow-400" style={{ fontSize: "18px", fontWeight: 700 }}>{selectedUser.displayName[0]}</span>
+          </div>
+          <div className="flex-1 text-left min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-gray-900" style={{ fontSize: "15px", fontWeight: 700 }}>
+                {entry?.position ? `${["1st","2nd","3rd"][entry.position-1] ?? `${entry.position}th`} · ` : ""}
+                {selectedUser.displayName}
+              </span>
+            </div>
+            <span className="text-gray-500" style={{ fontSize: "12px" }}>
+              {entry?.totalPoints ?? 0}pts total · {entry?.wins ?? 0}W {entry?.places ?? 0}P {entry?.dnfCount ?? 0} DNF
+            </span>
+          </div>
+          <ChevronDown size={18} className={`text-gray-400 flex-shrink-0 transition-transform ${showPicker ? "rotate-180" : ""}`} />
+        </button>
+
+        {showPicker && (
+          <div className="absolute left-0 right-0 top-full bg-white border border-gray-200 shadow-xl rounded-b-xl overflow-hidden">
+            {USERS.map(user => {
+              const uEntry = LEADERBOARD.find(l => l.userId === user.id);
+              const isSelected = user.id === selectedUserId;
+              return (
+                <button key={user.id}
+                  onClick={() => { setSelectedUserId(user.id); setShowPicker(false); }}
+                  className={`w-full flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0 transition-colors ${isSelected ? "bg-green-50" : "hover:bg-gray-50"}`}
+                >
+                  <div className="w-8 h-8 rounded-full bg-green-900 flex items-center justify-center flex-shrink-0">
+                    <span className="text-yellow-400" style={{ fontSize: "12px", fontWeight: 700 }}>{user.displayName[0]}</span>
+                  </div>
+                  <span className="flex-1 text-left" style={{ fontSize: "14px", fontWeight: isSelected ? 700 : 500, color: isSelected ? "#14532d" : "#374151" }}>
+                    {user.displayName}
+                    {user.id === CURRENT_USER_ID && <span className="ml-1 text-green-500" style={{ fontSize: "10px" }}>(You)</span>}
+                  </span>
+                  <div className="text-right">
+                    <span className="text-gray-600" style={{ fontSize: "12px", fontWeight: 600 }}>{uEntry?.totalPoints}pts</span>
+                    <span className="text-gray-400 ml-1" style={{ fontSize: "11px" }}>#{uEntry?.position}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Day Tabs */}
+      <div className="flex overflow-x-auto bg-white border-b border-gray-200 sticky top-0 z-10 scrollbar-hide">
+        {DAY_TABS.map((tab, i) => {
+          const active = selectedDay === i;
+          const isOv = i === MEETING.days.length;
+          return (
+            <button key={i} onClick={() => setSelectedDay(i)}
+              className={`flex-shrink-0 flex flex-col items-center px-4 py-2.5 border-b-2 transition-colors ${active ? "border-yellow-400 bg-green-50" : "border-transparent"}`}
+            >
+              {isOv
+                ? <span style={{ fontSize: "12px", fontWeight: active ? 700 : 500 }} className={active ? "text-green-900" : "text-gray-500"}>Overall</span>
+                : <>
+                    <span style={{ fontSize: "9px", fontWeight: 600, textTransform: "uppercase" }} className={active ? "text-green-700" : "text-gray-400"}>
+                      {i === CURRENT_DAY_INDEX ? "Today" : `Day ${i + 1}`}
+                    </span>
+                    <span style={{ fontSize: "11px", fontWeight: active ? 700 : 500 }} className={active ? "text-green-900" : "text-gray-500"}>
+                      {tab.split(" ")[0]}
+                    </span>
+                  </>}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content */}
+      <div className="p-3 flex flex-col gap-2">
+        {isOverall ? (
+          <OverallSummary userId={selectedUserId} />
+        ) : races.length === 0 ? (
+          <p className="text-center text-gray-400 py-8" style={{ fontSize: "14px" }}>No races for this day.</p>
+        ) : (
+          <>
+            <div className="grid items-center px-3 py-2 bg-green-900 rounded-t-lg" style={{ gridTemplateColumns: "4.5rem 1fr 4rem 4.5rem" }}>
+              {["Time","Horse","Result","Points"].map((h, i) => (
+                <span key={h} className={`text-green-300 ${i >= 2 ? "text-center" : ""}`}
+                  style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>{h}</span>
+              ))}
+            </div>
+            <div className="bg-white rounded-b-lg overflow-hidden shadow-sm">
+              {races.map((race, idx) => (
+                <RaceRow key={race.id} race={race} userId={selectedUserId} isViewingSelf={isViewingSelf} isEven={idx % 2 === 0} />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function RaceRow({ race, userId, isViewingSelf, isEven }: {
+  race: Race; userId: string; isViewingSelf: boolean; isEven: boolean;
+}) {
+  const raceOffMinutes = offTimeToMinutes(race.offTime);
+  const raceIsOff = SIMULATED_NOW_MINUTES >= raceOffMinutes;
+  const isResult = race.status === "result";
+  const hideFromOther = !raceIsOff && !isViewingSelf && !isResult;
+  const minsToOff = raceOffMinutes - SIMULATED_NOW_MINUTES;
+  const pick = getUserPick(userId, race.id);
+  const runner = pick ? getRunner(pick.runnerId) : undefined;
+
+  return (
+    <div className={`grid items-center border-b border-gray-100 last:border-0 ${isEven ? "bg-white" : "bg-gray-50/40"}`}
+      style={{ gridTemplateColumns: "4.5rem 1fr 4rem 4.5rem" }}>
+      <div className="flex flex-col items-start px-3 py-3">
+        <span className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>{race.offTime}</span>
+        <span className={`w-1.5 h-1.5 rounded-full mt-1 ${isResult ? "bg-green-500" : raceIsOff ? "bg-red-500 animate-pulse" : "bg-gray-300"}`} />
+      </div>
+
+      <div className="flex items-center gap-2 py-3 px-1 min-w-0 border-l border-gray-100">
+        {hideFromOther ? (
+          <div className="flex items-center gap-2 text-gray-400">
+            <EyeOff size={14} className="flex-shrink-0" />
+            <div className="min-w-0">
+              <span className="text-gray-400" style={{ fontSize: "12px", fontWeight: 600 }}>Hidden</span>
+              {minsToOff > 0 && (
+                <div className="flex items-center gap-1 mt-0.5">
+                  <Clock size={10} className="text-gray-400" />
+                  <span className="text-gray-400" style={{ fontSize: "10px" }}>Off in {minutesToHHMM(minsToOff)}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : runner ? (
+          <>
+            <SilkIcon colors={runner.silkColors} size={24} />
+            <div className="min-w-0">
+              <p className="text-gray-900 truncate" style={{ fontSize: "12px", fontWeight: 600 }}>{runner.horseName}</p>
+              <p className="text-gray-400 truncate" style={{ fontSize: "10px" }}>{runner.trainer}</p>
+            </div>
+          </>
+        ) : <span className="text-gray-400" style={{ fontSize: "12px" }}>No pick</span>}
+      </div>
+
+      <div className="flex items-center justify-center py-3 border-l border-gray-100 px-1">
+        {hideFromOther || !runner ? (
+          <span className="text-gray-300" style={{ fontSize: "11px" }}>—</span>
+        ) : isResult ? (
+          <span className="px-1.5 py-0.5 rounded text-white"
+            style={{ fontSize: "11px", fontWeight: 700,
+              backgroundColor: runner.finishPosition === 1 ? "#c9a227" :
+                runner.finishPosition && runner.finishPosition <= 3 ? "#16a34a" :
+                runner.finishStatus && runner.finishStatus !== "finished" ? "#dc2626" : "#6b7280" }}>
+            {finishLabel(runner)}
+          </span>
+        ) : raceIsOff ? (
+          <span className="text-red-500" style={{ fontSize: "11px", fontWeight: 700 }}>Off</span>
+        ) : <span className="text-gray-400" style={{ fontSize: "11px" }}>–</span>}
+      </div>
+
+      <div className="flex items-center justify-center py-3 border-l border-gray-100 px-1">
+        {hideFromOther || !runner ? (
+          <span className="text-gray-300" style={{ fontSize: "11px" }}>—</span>
+        ) : isResult && runner.pointsAwarded !== undefined ? (
+          <span style={{ fontSize: "13px", fontWeight: 700,
+            color: runner.pointsAwarded > 0 ? "#16a34a" : runner.pointsAwarded < 0 ? "#dc2626" : "#9ca3af" }}>
+            {runner.pointsAwarded > 0 ? `+${runner.pointsAwarded}` : runner.pointsAwarded === 0 ? "0" : `${runner.pointsAwarded}`}
+          </span>
+        ) : <span className="text-gray-300" style={{ fontSize: "11px" }}>—</span>}
+      </div>
+    </div>
+  );
+}
+
+function OverallSummary({ userId }: { userId: string }) {
+  const entry = LEADERBOARD.find(l => l.userId === userId);
+  if (!entry) return null;
+  return (
+    <div>
+      <div className="grid items-center px-3 py-2 bg-green-900 rounded-t-lg"
+        style={{ gridTemplateColumns: "1fr 4.5rem 3rem 3.5rem 3.5rem" }}>
+        {["Day","Points","W","P","DNF"].map((h, i) => (
+          <span key={h} className={`text-green-300 ${i >= 1 ? "text-center" : ""} ${i === 1 ? "text-right" : ""}`}
+            style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase" }}>{h}</span>
+        ))}
+      </div>
+      <div className="bg-white rounded-b-lg overflow-hidden shadow-sm">
+        {MEETING.days.map((day, i) => {
+          const pts = entry.dayPoints[i] ?? 0;
+          const isToday = i === CURRENT_DAY_INDEX;
+          return (
+            <div key={i}
+              className={`grid items-center px-3 py-3 border-b border-gray-100 last:border-0 ${isToday ? "bg-green-50" : i % 2 === 0 ? "bg-white" : "bg-gray-50/40"}`}
+              style={{ gridTemplateColumns: "1fr 4.5rem 3rem 3.5rem 3.5rem" }}
+            >
+              <div>
+                <span className="text-gray-800" style={{ fontSize: "13px", fontWeight: isToday ? 700 : 500 }}>{day}</span>
+                {isToday && <span className="ml-2 bg-yellow-100 text-yellow-700 px-1.5 py-0.5 rounded" style={{ fontSize: "9px", fontWeight: 700 }}>TODAY</span>}
+              </div>
+              <div className="text-right">
+                <span className="text-green-700" style={{ fontSize: "13px", fontWeight: 700 }}>{pts}</span>
+                <span className="text-gray-400" style={{ fontSize: "9px" }}>pts</span>
+              </div>
+              <div className="text-center"><span className="text-yellow-600" style={{ fontSize: "12px", fontWeight: 700 }}>{i === 0 ? Math.ceil(entry.wins * 0.6) : i === 1 ? Math.floor(entry.wins * 0.4) : 0}</span></div>
+              <div className="text-center"><span className="text-blue-600" style={{ fontSize: "12px", fontWeight: 600 }}>{i === 0 ? Math.ceil(entry.places * 0.5) : i === 1 ? Math.floor(entry.places * 0.5) : 0}</span></div>
+              <div className="text-center"><span className={entry.dnfCount > 0 && i <= 1 ? "text-red-500" : "text-gray-300"} style={{ fontSize: "12px", fontWeight: 600 }}>{i === 0 ? Math.ceil(entry.dnfCount * 0.5) : i === 1 ? Math.floor(entry.dnfCount * 0.5) : 0}</span></div>
+            </div>
+          );
+        })}
+        <div className="grid items-center px-3 py-3 bg-green-900" style={{ gridTemplateColumns: "1fr 4.5rem 3rem 3.5rem 3.5rem" }}>
+          <span className="text-yellow-400" style={{ fontSize: "13px", fontWeight: 700 }}>Festival Total</span>
+          <div className="text-right">
+            <span className="text-yellow-400" style={{ fontSize: "14px", fontWeight: 700 }}>{entry.totalPoints}</span>
+            <span className="text-green-400" style={{ fontSize: "9px" }}>pts</span>
+          </div>
+          <div className="text-center"><span className="text-yellow-300" style={{ fontSize: "13px", fontWeight: 700 }}>{entry.wins}</span></div>
+          <div className="text-center"><span className="text-green-300" style={{ fontSize: "13px", fontWeight: 600 }}>{entry.places}</span></div>
+          <div className="text-center"><span className={entry.dnfCount > 0 ? "text-red-400" : "text-green-400"} style={{ fontSize: "13px", fontWeight: 600 }}>{entry.dnfCount}</span></div>
+        </div>
+      </div>
+    </div>
+  );
+}
+src/app/pages/More.tsx
+import { Info, Shield, BookOpen, Star } from "lucide-react";
+
+const RULES = [
+  "One pick per race, per player.",
+  "Picks lock server-side when the race goes off.",
+  "You cannot see opponents' picks before a race starts.",
+  "Snapshot odds are frozen at 09:00 on race day.",
+  "Points are based on the frozen fair odds at 09:00.",
+  "Win = full win points. Place (2nd/3rd) = place points.",
+  "Non-runners (NR) score 0 points.",
+  "DNF horses may incur a points penalty.",
+  "All results are official once the stewards confirm.",
+  "Admin can rescore a race once if an error occurred.",
+];
+
+export default function More() {
+  return (
+    <div className="p-3 flex flex-col gap-3">
+      <section className="bg-green-900 rounded-xl p-4 text-white">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-lg bg-yellow-400 flex items-center justify-center">
+            <span className="text-green-900 text-xl">🏇</span>
+          </div>
+          <div>
+            <h1 className="text-yellow-400" style={{ fontSize: "16px", fontWeight: 700 }}>Fantasy Furlong</h1>
+            <p className="text-green-300" style={{ fontSize: "11px" }}>Cheltenham Festival Edition 2026</p>
+          </div>
+        </div>
+        <p className="text-green-200" style={{ fontSize: "12px", lineHeight: 1.6 }}>
+          Pick one horse per race across the Cheltenham Festival. Score points based on your horse's finishing position and their morning odds. Compete with friends across all four days to top the leaderboard!
+        </p>
+      </section>
+
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <BookOpen size={16} className="text-green-700" />
+          <h2 className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>How It Works</h2>
+        </div>
+        <div className="p-4 flex flex-col gap-3">
+          {[
+            { step: "1", title: "Pick your horse", desc: "Select one horse per race from the Racecard before the off time." },
+            { step: "2", title: "Watch the race", desc: "Picks lock when the race goes off — no last-minute changes!" },
+            { step: "3", title: "Score points", desc: "Win = full win points. Place = place points. Based on morning odds." },
+            { step: "4", title: "Climb the leaderboard", desc: "Compete across all 4 days. Best Festival total wins!" },
+          ].map(({ step, title, desc }) => (
+            <div key={step} className="flex gap-3">
+              <span className="w-7 h-7 rounded-full bg-green-900 text-yellow-400 flex items-center justify-center flex-shrink-0" style={{ fontSize: "12px", fontWeight: 700 }}>{step}</span>
+              <div>
+                <p className="text-gray-800" style={{ fontSize: "13px", fontWeight: 600 }}>{title}</p>
+                <p className="text-gray-500" style={{ fontSize: "12px" }}>{desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <Shield size={16} className="text-green-700" />
+          <h2 className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>Game Rules</h2>
+        </div>
+        <div className="px-4 py-3 flex flex-col gap-2">
+          {RULES.map((rule, i) => (
+            <div key={i} className="flex items-start gap-2">
+              <span className="text-yellow-500 mt-0.5 flex-shrink-0" style={{ fontSize: "12px" }}>•</span>
+              <p className="text-gray-600" style={{ fontSize: "12px", lineHeight: 1.5 }}>{rule}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+          <Star size={16} className="text-green-700" />
+          <h2 className="text-green-900" style={{ fontSize: "13px", fontWeight: 700 }}>Points Guide</h2>
+        </div>
+        <div className="p-4">
+          <p className="text-gray-500 mb-3" style={{ fontSize: "12px" }}>
+            Points are calculated from frozen 09:00 fair odds. Higher odds = more points for a win.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { odds: "1.5 (Evs-)", win: 45, place: 12 },
+              { odds: "3.0 (2/1)",  win: 28, place: 9  },
+              { odds: "5.0 (4/1)",  win: 16, place: 5  },
+              { odds: "8.0 (7/1)",  win: 10, place: 3  },
+              { odds: "12.0 (11/1)",win: 8,  place: 3  },
+              { odds: "20.0 (19/1)",win: 5,  place: 2  },
+            ].map(({ odds, win, place }) => (
+              <div key={odds} className="bg-gray-50 rounded-lg p-2">
+                <p className="text-gray-400" style={{ fontSize: "9px", fontWeight: 700 }}>ODDS {odds}</p>
+                <div className="flex justify-between mt-1">
+                  <span className="text-green-600" style={{ fontSize: "11px", fontWeight: 600 }}>W: {win}pts</span>
+                  <span className="text-blue-500" style={{ fontSize: "11px" }}>P: {place}pts</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="text-center text-gray-400 pb-4" style={{ fontSize: "11px" }}>
+        Fantasy Furlong v1.0 · Cheltenham 2026
+      </div>
+    </div>
+  );
+}
+Codex Integration Notes
+When wiring up to the live backend, these are the key substitutions to make in mockData.ts:
+
+Mock constant	Replace with
+ALL_RACES	GET /api/races?day=:dayIndex
+PICKS	GET /api/picks?userId=:id
+LEADERBOARD	GET /api/leaderboard (poll ≤15s)
+USERS	GET /api/users or from auth session
+CURRENT_USER_ID	Auth session user.id
+CURRENT_DAY_INDEX	Derived from meeting.date vs Date.now() UTC
+SIMULATED_NOW_MINUTES	new Date().getUTCHours() * 60 + new Date().getUTCMinutes()
+Pick submission	POST /api/picks { user_id, race_id, runner_id }
+The pick lock check (SIMULATED_NOW_MINUTES >= offTimeToMinutes) in Racecard.tsx is cosmetic only — the server enforces the real lock via off_time per the architecture lock document.
+
+more
